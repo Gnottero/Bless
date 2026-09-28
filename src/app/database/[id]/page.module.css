@@ -1,0 +1,559 @@
+/*
+ * Single card page. The styling changes with the card's Form: Luce is gold
+ * and airy, Ombra is cold and heavy, Duale is terracotta with cross-hatching.
+ * On desktop both effects (Maledizione and Preghiera) should fit above the
+ * fold.
+ */
+
+.page {
+  position: relative;
+  overflow: clip;
+  padding-block: 16px clamp(56px, 8vw, 96px);
+
+  /* Colours already come from the Form theme in globals.css. Here we only
+     set the stuff specific to this page (strokes, hatching, tilt...). */
+  --tint: var(--accent);
+  --wash: var(--surface-2);
+  --paper: var(--surface);
+  --rule: var(--line);
+  --ink-form: var(--text);
+  --stroke-form: var(--stroke);
+  --corner-form: var(--corner);
+  --corner-form-sm: var(--corner-sm);
+  /* Single radius value, for boxes that are only rounded on one side. */
+  --radius-form: 15px;
+  /* Hatching: angle, spacing, line width. */
+  --hatch-angle: -52deg;
+  --hatch-step: 9px;
+  --hatch-weight: 1.2px;
+  /* Badge letter spacing. */
+  --tracking: 0.14em;
+  /* Page tilt, shadow weight and title style. */
+  --tilt-a: 0deg;
+  --tilt-b: 0deg;
+  --shadow-form: 5px 6px 0 rgb(28 23 16 / 0.13);
+  --rule-style: solid;
+}
+
+/* Luce: warm gold, thin lines, soft corners. */
+.page[data-form="Luce"] {
+  --tint: var(--form-light);
+  --wash: var(--form-light-wash);
+  --stroke-form: 1.4px;
+  /* Everything straight, faint gold shadow, double rule. Very formal. */
+  --shadow-form: 4px 5px 0 rgb(125 90 13 / 0.2);
+  --rule-style: double;
+}
+
+/* Ombra: cold lavender, thicker lines, almost square corners. */
+.page[data-form="Ombra"] {
+  --tint: var(--form-shadow);
+  --wash: var(--form-shadow-wash);
+  --stroke-form: 2px;
+  --corner-form: 6px 4px 7px 5px;
+  --corner-form-sm: 5px 3px 5px 4px;
+  --radius-form: 5px;
+  --hatch-angle: -80deg;
+  --hatch-step: 5.5px;
+  --hatch-weight: 1.1px;
+  --tracking: 0.2em;
+  /* Nothing is straight, long black shadow, dashed rules. */
+  --tilt-a: -0.65deg;
+  --tilt-b: 0.55deg;
+  --shadow-form: 7px 9px 0 rgb(24 16 51 / 0.26);
+  --rule-style: dashed;
+}
+
+/* Duale: terracotta and cross-hatching (light + dark, get it). */
+.page[data-form="Duale"] {
+  --tint: var(--form-dual);
+  --wash: var(--form-dual-wash);
+  --stroke-form: 1.7px;
+  --corner-form: 18px 6px 19px 7px;
+  --radius-form: 17px;
+  --hatch-angle: -42deg;
+  --hatch-step: 10px;
+}
+
+/* Wider on big screens so the two effects fit side by side above the fold. */
+@media (min-width: 1200px) {
+  .page {
+    --maxw: 1320px;
+  }
+}
+
+.content {
+  position: relative;
+  z-index: 1;
+}
+
+/* Diagonal hatching at the top of the page that fades out going down. */
+.hatching {
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 620px;
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0.16;
+  background-image: repeating-linear-gradient(
+    var(--hatch-angle),
+    var(--tint) 0 var(--hatch-weight),
+    transparent var(--hatch-weight) var(--hatch-step)
+  );
+  mask-image: radial-gradient(ellipse 80% 100% at 50% 0%, #000 0%, transparent 78%);
+}
+
+/* Duale gets cross-hatching over the whole page. */
+.page[data-form="Duale"] .hatching {
+  background-image: repeating-linear-gradient(
+      var(--hatch-angle),
+      var(--tint) 0 var(--hatch-weight),
+      transparent var(--hatch-weight) var(--hatch-step)
+    ),
+    repeating-linear-gradient(
+      calc(var(--hatch-angle) * -1),
+      var(--form-light) 0 var(--hatch-weight),
+      transparent var(--hatch-weight) var(--hatch-step)
+    );
+}
+
+/* ------------------------------ breadcrumbs ------------------------------ */
+
+.breadcrumbs {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding-bottom: 12px;
+  border-bottom: var(--stroke-form) solid var(--rule);
+  font-size: 15px;
+}
+
+.back {
+  font-family: var(--font-display);
+  font-weight: 600;
+  color: var(--text-2);
+}
+
+.back:hover {
+  color: var(--tint);
+}
+
+.number {
+  font-size: 13px;
+  color: var(--text-3);
+}
+
+/* ------------------------------ layout ------------------------------ */
+
+.layout {
+  display: grid;
+  gap: clamp(24px, 4vw, 44px);
+  padding-top: clamp(20px, 3vw, 32px);
+}
+
+.imageColumn {
+  justify-self: center;
+  width: 100%;
+  max-width: 380px;
+}
+
+.textColumn {
+  align-self: start;
+  min-width: 0;
+}
+
+/* ------------------------------ header ------------------------------ */
+
+.header {
+  padding-bottom: 18px;
+  /* Double line for Luce, dashed for Ombra. */
+  border-bottom: 3px var(--rule-style) var(--rule);
+}
+
+/* Form badge. */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  padding: 5px 16px 5px 7px;
+  background: var(--wash);
+  border: var(--stroke-form) solid var(--ink-form);
+  border-radius: 999px;
+  font-family: var(--font-display);
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: var(--tracking);
+  text-transform: uppercase;
+  line-height: 1.1;
+  color: var(--text);
+  box-shadow: 2px 2px 0 rgb(28 23 16 / 0.16);
+  transform: rotate(var(--tilt-b));
+}
+
+/* Ombra badge is tilted and squarer. */
+.page[data-form="Ombra"] .badge {
+  border-radius: 4px;
+  transform: rotate(var(--tilt-a)) skewX(-3deg);
+}
+
+.page[data-form="Ombra"] .badge > * {
+  transform: skewX(3deg);
+}
+
+.emblem {
+  display: inline-grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  flex: none;
+  border-radius: 50%;
+  background: var(--paper);
+  border: 1.2px solid var(--ink-form);
+  color: var(--tint);
+  --emblem-paper: var(--paper);
+}
+
+.name {
+  margin-top: 12px;
+  font-size: clamp(32px, 5vw, 52px);
+  font-weight: 700;
+}
+
+/* Luce: spaced out letters with a gold line under, like an engraving. */
+.page[data-form="Luce"] .name {
+  letter-spacing: 0.015em;
+  text-shadow: 0 1px 0 rgb(125 90 13 / 0.22);
+}
+
+/* Ombra: offset double shadow, like a bad print. */
+.page[data-form="Ombra"] .name {
+  letter-spacing: -0.015em;
+  transform: rotate(-0.4deg);
+  transform-origin: left center;
+  text-shadow: 2px 2px 0 rgb(76 59 145 / 0.3), -1px 0 0 rgb(24 16 51 / 0.2);
+}
+
+/* Duale: just one warm shadow. */
+.page[data-form="Duale"] .name {
+  text-shadow: 1.5px 1.5px 0 rgb(154 68 32 / 0.24);
+}
+
+.motto {
+  margin-top: 8px;
+  max-width: 54ch;
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: clamp(15px, 1.8vw, 17px);
+  line-height: 1.4;
+  color: var(--text-2);
+}
+
+/* ------------------------------ tokens ------------------------------ */
+
+.tokens {
+  display: grid;
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.token {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  padding: 9px 16px 9px 9px;
+  background: var(--paper);
+  border: var(--stroke-form) solid var(--ink-form);
+  border-radius: var(--corner-form);
+  box-shadow: var(--shadow-form);
+  transform: rotate(var(--tilt-a));
+}
+
+.token[data-token="karma"] {
+  transform: rotate(var(--tilt-b));
+}
+
+/* Same look as on the card: Occhio light, Karma dark. */
+.digit {
+  display: grid;
+  place-items: center;
+  width: 46px;
+  height: 46px;
+  flex: none;
+  border-radius: 50%;
+  border: 2.2px solid var(--ink-form);
+  font-family: var(--font-display);
+  font-size: 24px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.token[data-token="eye"] .digit {
+  background: #fdfaf2;
+  color: var(--ink-form);
+}
+
+.token[data-token="karma"] .digit {
+  background: #17130d;
+  color: #f6efdd;
+}
+
+.tokenName {
+  font-family: var(--font-display);
+  font-size: 17px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  line-height: 1.15;
+}
+
+.tokenNote {
+  font-size: 13px;
+  line-height: 1.35;
+  color: var(--text-2);
+}
+
+/* ------------------------------ the two modes ------------------------------ */
+
+.choice {
+  margin-top: 16px;
+  max-width: 68ch;
+  font-size: 15px;
+  line-height: 1.55;
+  color: var(--text-2);
+}
+
+.choice b {
+  color: var(--text);
+  font-weight: 600;
+}
+
+/* Side by side as soon as they fit, so you don't have to scroll. */
+.modes {
+  display: grid;
+  gap: 16px;
+  margin-top: 16px;
+}
+
+/* Don't add `overflow: hidden` here or the glossary tooltips get clipped.
+   The header band rounds its own corners instead. */
+.mode {
+  --mode-tint: var(--tint);
+  display: flex;
+  flex-direction: column;
+  background: var(--paper);
+  border: var(--stroke-form) solid var(--ink-form);
+  border-radius: var(--corner-form);
+  box-shadow: var(--shadow-form);
+  transform: rotate(var(--tilt-a));
+}
+
+.mode[data-mode="prayer"] {
+  transform: rotate(var(--tilt-b));
+}
+
+.mode[data-mode="prayer"][data-type="Impulso"] {
+  --mode-tint: var(--impulse);
+}
+.mode[data-mode="prayer"][data-type="Eco"] {
+  --mode-tint: var(--echo);
+}
+.mode[data-mode="prayer"][data-type="Legame"] {
+  --mode-tint: var(--bond);
+}
+
+/* Coloured header band, like the effect box on the card. */
+.band {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 14px;
+  background: color-mix(in srgb, var(--mode-tint) 13%, var(--paper));
+  border-bottom: var(--stroke-form) solid var(--ink-form);
+  border-radius: var(--radius-form) var(--radius-form) 0 0;
+}
+
+.bandIcon {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  flex: none;
+  border-radius: 50%;
+  border: var(--stroke-form) solid var(--ink-form);
+  background: var(--paper);
+  color: var(--mode-tint);
+}
+
+.bandTitle {
+  flex: 1;
+  min-width: 0;
+  font-size: clamp(18px, 2.2vw, 21px);
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+.bandNote {
+  flex: none;
+  padding: 2px 11px;
+  border: var(--stroke-form) solid var(--mode-tint);
+  border-radius: 999px;
+  background: var(--paper);
+  font-family: var(--font-display);
+  font-size: 12.5px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--mode-tint);
+}
+
+/* Effect text, quoted straight from the card, so big serif with some air.
+   The corner flourishes copy the ones on the printed card. */
+.body {
+  position: relative;
+  flex: 1;
+  background-repeat: no-repeat;
+  background-size: 20px 20px, 20px 20px;
+  background-position: left 10px top 12px, right 10px bottom 12px;
+  background-image: url("data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M1 23V9Q1 1 9 1h14' fill='none' stroke='%231c1710' stroke-width='1.5' stroke-linecap='round' opacity='0.4'/%3E%3Ccircle cx='6.5' cy='6.5' r='1.9' fill='%231c1710' opacity='0.4'/%3E%3C/svg%3E"),
+    url("data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M23 1v14q0 8-8 8H1' fill='none' stroke='%231c1710' stroke-width='1.5' stroke-linecap='round' opacity='0.4'/%3E%3Ccircle cx='17.5' cy='17.5' r='1.9' fill='%231c1710' opacity='0.4'/%3E%3C/svg%3E");
+  padding: 20px clamp(26px, 3.5vw, 34px);
+  font-family: var(--font-display);
+  font-size: clamp(19px, 2.2vw, 23px);
+  line-height: 1.38;
+  white-space: pre-line;
+  text-wrap: pretty;
+}
+
+.typeDefinition {
+  margin: 0 clamp(16px, 3vw, 24px);
+  padding: 9px 13px;
+  border: 1.5px dashed color-mix(in srgb, var(--mode-tint) 55%, transparent);
+  border-radius: var(--corner-form-sm);
+  background: color-mix(in srgb, var(--mode-tint) 7%, transparent);
+  font-size: 13px;
+  line-height: 1.45;
+  color: var(--text-2);
+}
+
+.typeDefinition b {
+  color: var(--mode-tint);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  font-size: 12px;
+}
+
+.modeNote {
+  margin-top: 14px;
+  padding: 11px clamp(16px, 3vw, 24px);
+  border-top: 1px dashed var(--rule);
+  background: var(--wash);
+  border-radius: 0 0 var(--radius-form) var(--radius-form);
+  font-size: 13.5px;
+  line-height: 1.5;
+  color: var(--text-2);
+}
+
+.modeNote b {
+  color: var(--text);
+}
+
+.help {
+  margin-top: 16px;
+  font-size: 13px;
+  font-style: italic;
+  color: var(--text-3);
+}
+
+/* ------------------------------ pager ------------------------------ */
+
+.pager {
+  display: grid;
+  gap: 12px;
+  margin-top: clamp(48px, 7vw, 80px);
+  padding-top: 26px;
+  border-top: var(--stroke-form) solid var(--rule);
+}
+
+.neighbor {
+  display: grid;
+  gap: 4px;
+  padding: 16px 20px;
+  background: var(--paper);
+  border: var(--stroke-form) solid var(--ink-form);
+  border-radius: var(--corner-form);
+  box-shadow: var(--shadow-form);
+  transform: rotate(var(--tilt-a));
+  transition: transform 0.14s ease, box-shadow 0.14s ease;
+}
+
+.neighbor[data-next] {
+  transform: rotate(var(--tilt-b));
+}
+
+.neighbor:hover {
+  transform: rotate(var(--tilt-a)) translate(2px, 2px);
+  box-shadow: 3px 4px 0 rgb(28 23 16 / 0.16);
+}
+
+.neighbor[data-next]:hover {
+  transform: rotate(var(--tilt-b)) translate(2px, 2px);
+}
+
+.neighbor[data-next] {
+  text-align: right;
+}
+
+.dir {
+  font-family: var(--font-display);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text-3);
+}
+
+.neighborName {
+  font-family: var(--font-display);
+  font-size: 20px;
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+/* Below 720px the glossary tooltip is `position: fixed`, and a transformed
+   parent would become its containing block instead of the viewport. So no
+   rotation on the effect boxes here. */
+@media (max-width: 720px) {
+  .mode,
+  .mode[data-mode="prayer"] {
+    transform: none;
+  }
+}
+
+@media (min-width: 560px) {
+  .tokens {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (min-width: 900px) {
+  .layout {
+    grid-template-columns: minmax(0, 340px) minmax(0, 1fr);
+    align-items: start;
+  }
+  .pager {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+/* From here up the effects go side by side and the whole page fits on one
+   screen. */
+@media (min-width: 1200px) {
+  .modes {
+    grid-template-columns: 1fr 1fr;
+    align-items: stretch;
+  }
+  .layout {
+    grid-template-columns: minmax(0, 360px) minmax(0, 1fr);
+  }
+}
