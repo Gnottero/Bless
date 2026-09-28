@@ -1,0 +1,115 @@
+.page {
+  padding-block: clamp(32px, 6vw, 64px) clamp(56px, 8vw, 96px);
+}
+
+.header {
+  max-width: 68ch;
+}
+
+.title {
+  font-size: clamp(34px, 6.5vw, 62px);
+  margin-top: 16px;
+}
+
+.cta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 30px;
+}
+
+.block {
+  margin-top: clamp(48px, 7vw, 80px);
+}
+
+.h2 {
+  font-size: clamp(22px, 3.4vw, 32px);
+}
+
+.grid {
+  display: grid;
+  gap: 16px;
+  margin-top: 24px;
+}
+
+.tile {
+  position: relative;
+  overflow: hidden;
+  padding: 26px 24px 28px;
+  display: grid;
+  gap: 10px;
+  align-content: start;
+}
+
+.tile[data-form]::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 88px;
+  pointer-events: none;
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--edge, var(--accent)) 22%, transparent),
+    transparent
+  );
+}
+
+.tile > * {
+  position: relative;
+}
+
+.tile[data-form="Luce"] {
+  --edge: var(--form-light);
+}
+
+.tile[data-form="Duale"] {
+  --edge: var(--form-dual);
+}
+
+.tag {
+  font-family: var(--font-display);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+.tileTitle {
+  font-size: 24px;
+}
+
+.tileText {
+  color: var(--text-2);
+  font-size: 15.5px;
+  max-width: 52ch;
+}
+
+.buy {
+  margin-top: clamp(48px, 7vw, 80px);
+  padding: clamp(26px, 4vw, 40px);
+  display: grid;
+  gap: 22px;
+  align-items: center;
+  background: color-mix(in srgb, var(--accent) 9%, var(--surface));
+}
+
+.footnote {
+  margin-top: 32px;
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: 14.5px;
+  color: var(--text-3);
+}
+
+@media (min-width: 700px) {
+  .grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 900px) {
+  .buy {
+    grid-template-columns: minmax(0, 1fr) auto;
+  }
+}
