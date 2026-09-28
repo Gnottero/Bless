@@ -1,0 +1,78 @@
+.page {
+  padding-block: clamp(32px, 6vw, 64px) clamp(56px, 8vw, 96px);
+  max-width: 820px;
+}
+
+.title {
+  font-size: clamp(32px, 6vw, 54px);
+  margin-top: 16px;
+}
+
+.notice {
+  margin-top: 40px;
+  padding: 24px;
+  border-left: 4px solid var(--accent);
+}
+
+.tag {
+  font-family: var(--font-display);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+.noticeText {
+  margin-top: 10px;
+  color: var(--text-2);
+}
+
+.missingList {
+  margin-top: 16px;
+  padding-left: 20px;
+  display: grid;
+  gap: 8px;
+  color: var(--text-2);
+  font-size: 15px;
+}
+
+.missingList li::marker {
+  color: var(--accent);
+}
+
+.contacts {
+  margin-top: 48px;
+  padding-top: 36px;
+  border-top: var(--stroke) solid var(--line);
+}
+
+.h2 {
+  font-size: clamp(22px, 3.2vw, 28px);
+}
+
+.channels {
+  list-style: none;
+  padding: 0;
+  margin-top: 18px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 20px;
+}
+
+.channels a {
+  color: var(--text-2);
+  font-weight: 600;
+}
+
+.channels a:hover {
+  color: var(--accent);
+}
+
+.note {
+  margin-top: 20px;
+  margin-bottom: 28px;
+  color: var(--text-3);
+  font-size: 14px;
+  max-width: 60ch;
+}
