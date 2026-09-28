@@ -4,7 +4,6 @@ import { CSSProperties, useEffect, useMemo, useRef, useState, type RefObject } f
 import { flushSync } from "react-dom";
 import Link from "next/link";
 import {
-  downloadSavedReplayArchive,
   MAX_SAVED_REPLAYS,
   readSavedReplays,
   SAVED_REPLAYS_STORAGE_KEY,
@@ -1475,7 +1474,6 @@ function GameOverDialog({
   const opponentActivity = game.replay?.player_activity?.[game.bot_player];
   const won = game.winner === game.human_player;
   const [saveError, setSaveError] = useState("");
-  const [exportMessage, setExportMessage] = useState("");
   const saveReplay = () => {
     const replayId = onSaveReplay();
     if (replayId) {
@@ -1483,20 +1481,6 @@ function GameOverDialog({
     } else {
       setSaveError("Non è stato possibile salvare il replay su questo dispositivo.");
     }
-  };
-  const exportReplays = () => {
-    const replayId = savedReplayId ?? onSaveReplay();
-    if (!replayId) {
-      setExportMessage("Non è stato possibile preparare il file.");
-      return;
-    }
-    const records = readSavedReplays<ManualReplay>();
-    const count = downloadSavedReplayArchive(records);
-    setExportMessage(
-      count > 0
-        ? `File scaricato con ${count} ${count === 1 ? "partita" : "partite"}.`
-        : "Non è stato possibile preparare il file.",
-    );
   };
   return (
     <div className="modal-layer result-layer">
@@ -1524,11 +1508,9 @@ function GameOverDialog({
         </div>
         {savedReplayId && <p className="replay-saved-note">✓ Replay conservato su questo dispositivo.</p>}
         {saveError && <p className="save-replay-error">{saveError}</p>}
-        {exportMessage && <p className="replay-export-note" role="status">{exportMessage}</p>}
         <div className="result-actions">
           <button type="button" onClick={onRestart}>Nuova partita</button>
           {!savedReplayId && game.replay && <button type="button" className="save-replay-button" onClick={saveReplay}>Riprova il salvataggio</button>}
-          {game.replay && <button type="button" className="export-replay-button" onClick={exportReplays}>Scarica dati per Sim. Bless</button>}
           {savedReplayId && <a href="/gioco">Torna alla scelta della partita</a>}
         </div>
       </section>

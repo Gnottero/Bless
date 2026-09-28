@@ -314,10 +314,12 @@ test("ships flat inspectable zones and a landscape-only phone table", async () =
   assert.match(tableStyles, /\.table-effects-layer\s*{[^}]*z-index:\s*120/s);
 });
 
-test("exports saved games in a versioned archive for the simulator", async () => {
-  const [savedReplays, gameHome, replay, manualWorker, documentation] = await Promise.all([
+test("keeps replay data available internally without exposing downloads in the game UI", async () => {
+  const [savedReplays, gameHome, botPage, roomPage, replay, manualWorker, documentation] = await Promise.all([
     text("../app/saved-replays.ts"),
     text("../src/app/gioco/PlayLauncher.tsx"),
+    text("../src/app/gioco/bot/page.tsx"),
+    text("../src/app/gioco/stanza/[code]/page.tsx"),
     text("../public/python/bless_sim/replay.py"),
     text("../public/manual-worker.mjs"),
     text("../docs/sync-engine-and-replays.md"),
@@ -326,7 +328,9 @@ test("exports saved games in a versioned archive for the simulator", async () =>
   assert.match(savedReplays, /bless\.replay\.archive/);
   assert.match(savedReplays, /downloadSavedReplayArchive/);
   assert.match(savedReplays, /bless-partite-/);
-  assert.match(gameHome, /Scarica dati per Sim\. Bless/);
+  for (const page of [gameHome, botPage, roomPage]) {
+    assert.doesNotMatch(page, /Scarica dati per Sim\. Bless/);
+  }
   assert.match(replay, /engine_version/);
   assert.match(manualWorker, /bless_sim\/version\.py/);
   assert.match(documentation, /Bless-cardgame\/Bless-core/);

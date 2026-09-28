@@ -355,55 +355,6 @@
   color: var(--form-dual);
 }
 
-/* -------------------------------- archive -------------------------------- */
-
-.archive {
-  margin-top: 24px;
-  padding: clamp(24px, 4vw, 36px);
-  display: grid;
-  gap: 20px;
-  align-items: start;
-}
-
-.archiveCopy {
-  display: grid;
-  gap: 10px;
-}
-
-.replays {
-  list-style: none;
-  padding: 0;
-  margin-top: 6px;
-  border-top: 1px dashed var(--line);
-  font-size: 14.5px;
-}
-
-.replays li {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-between;
-  gap: 2px 16px;
-  padding: 8px 0;
-  border-bottom: 1px dashed var(--line);
-}
-
-.replays time {
-  font-family: var(--font-mono);
-  font-size: 13px;
-  color: var(--text-3);
-}
-
-.status {
-  font-size: 14.5px;
-  color: var(--text-2);
-}
-
-/* Empty until an export: out of the flow, so it doesn't add a gap, but
-   still in the page as a live region. */
-.status:empty {
-  position: absolute;
-}
-
 @media (prefers-reduced-motion: reduce) {
   .spinner {
     animation-duration: 2.4s;
@@ -422,15 +373,5 @@
 
   .tutorialMode {
     grid-column: 1 / -1;
-  }
-}
-
-@media (min-width: 900px) {
-  .archive {
-    grid-template-columns: minmax(0, 1fr) auto;
-  }
-
-  .archive .action {
-    margin-top: 0;
   }
 }

@@ -2,15 +2,11 @@
 
 import { useEffect, useId, useState, type FormEvent, type ReactNode } from "react";
 import {
-  REPLAYS_KEY,
   botUrl,
   createRoom,
-  downloadReplayArchive,
-  readSavedReplays,
   rememberRoomAccess,
   roomUrl,
   type DeckId,
-  type SavedReplay,
 } from "@/lib/simulator";
 import styles from "./PlayLauncher.module.css";
 
@@ -30,18 +26,6 @@ const DECKS: { id: DeckId; title: string; subtitle: string; text: string }[] = [
 ];
 
 const DEFAULT_NAME = "Giocatore 1";
-
-const dateFormat = new Intl.DateTimeFormat("it-IT", {
-  day: "numeric",
-  month: "short",
-  hour: "2-digit",
-  minute: "2-digit",
-});
-
-function formatDate(iso: string): string {
-  const date = new Date(iso);
-  return Number.isNaN(date.getTime()) ? "" : dateFormat.format(date);
-}
 
 /* Stroke icons, 24x24 grid. */
 const ICONS = {
@@ -66,7 +50,6 @@ const ICONS = {
       <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2Z" />
     </>
   ),
-  download: <path d="M12 15V3M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5" />,
   check: <path d="M20 6 9 17l-5-5" />,
 } satisfies Record<string, ReactNode>;
 
@@ -105,7 +88,7 @@ function StepHeading({ n, kicker, title, id }: { n: string; kicker: string; titl
 }
 
 /**
- * Deck picker, bot / private room launch and the local match archive.
+ * Deck picker and bot / private room launch.
  * The match itself runs in the simulator: see `lib/simulator.ts`.
  */
 export default function PlayLauncher() {
@@ -113,30 +96,19 @@ export default function PlayLauncher() {
   const [name, setName] = useState("");
   const [creating, setCreating] = useState(false);
   const [error, setError] = useState("");
-  // null until read on the client, so the server HTML doesn't claim "0".
-  const [replays, setReplays] = useState<SavedReplay[] | null>(null);
-  const [exportStatus, setExportStatus] = useState("");
   const nameId = useId();
 
   const selected = DECKS.find((d) => d.id === deck) ?? DECKS[0];
 
   useEffect(() => {
-    const refresh = () => setReplays(readSavedReplays());
-    const onStorage = (e: StorageEvent) => {
-      if (e.key === null || e.key === REPLAYS_KEY) refresh();
-    };
     // Coming back from the simulator via the back button restores this page
-    // from the bfcache: re-read the archive and unlock the invite button.
+    // from the bfcache: unlock the invite button.
     const onPageShow = (e: PageTransitionEvent) => {
       if (!e.persisted) return;
-      refresh();
       setCreating(false);
     };
-    refresh();
-    window.addEventListener("storage", onStorage);
     window.addEventListener("pageshow", onPageShow);
     return () => {
-      window.removeEventListener("storage", onStorage);
       window.removeEventListener("pageshow", onPageShow);
     };
   }, []);
@@ -155,18 +127,6 @@ export default function PlayLauncher() {
       setCreating(false);
     }
   }
-
-  function onDownload() {
-    if (!replays) return;
-    const n = downloadReplayArchive(replays);
-    setExportStatus(
-      n > 0
-        ? `File pronto: contiene ${n} ${n === 1 ? "partita" : "partite"}.`
-        : "Non ci sono ancora partite da esportare.",
-    );
-  }
-
-  const count = replays?.length ?? 0;
 
   return (
     <div className={styles.launcher} data-deck={deck}>
@@ -291,47 +251,6 @@ export default function PlayLauncher() {
         </div>
       </section>
 
-      {/* ----------------------------- 03 archive ----------------------------- */}
-      <section className={styles.block} aria-labelledby="partite">
-        <StepHeading n="03" kicker="Dati portatili" title="Porta le partite nel simulatore" id="partite" />
-        <div className={`panel ${styles.archive}`}>
-          <div className={styles.archiveCopy}>
-            <p className={styles.tag}>Archivio su questo dispositivo</p>
-            <h3 className={styles.modeTitle}>
-              {replays === null
-                ? "Partite salvate"
-                : `${count} ${count === 1 ? "partita salvata" : "partite salvate"}`}
-            </h3>
-            <p className={styles.modeText}>
-              Ogni partita completata viene conservata automaticamente qui. Scarica un unico file
-              JSON da caricare nella chat «Sim. Bless» per analisi, replay e futuro allenamento
-              del Bot.
-            </p>
-            {count > 0 && (
-              <ol className={styles.replays}>
-                {replays!.map((r) => (
-                  <li key={r.id}>
-                    <span>{r.title}</span>
-                    <time dateTime={r.saved_at}>{formatDate(r.saved_at)}</time>
-                  </li>
-                ))}
-              </ol>
-            )}
-            {/* Always rendered: a live region added together with its text isn't announced. */}
-            <p className={styles.status} role="status">
-              {exportStatus}
-            </p>
-          </div>
-          <button
-            type="button"
-            className={`btn btn--ghost ${styles.action}`}
-            disabled={count === 0}
-            onClick={onDownload}
-          >
-            <Icon name="download" size={18} /> Scarica dati per Sim. Bless
-          </button>
-        </div>
-      </section>
     </div>
   );
 }

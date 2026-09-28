@@ -478,7 +478,6 @@ button.player-altar:hover { border-radius: 8px; background: rgba(213,170,93,.08)
 .result-actions { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 9px; }
 .result-actions button:disabled { opacity: .58; cursor: not-allowed; }
 .result-actions .save-replay-button { color: #44334c; border: 1px solid rgba(114,84,161,.2); background: white; }
-.result-actions .export-replay-button { color: #14323b; border: 1px solid rgba(111,225,255,.35); background: #dff9ff; }
 .result-rematch-note { margin: 0; color: #7254a1; font-size: 12px; font-weight: 750; }
 .save-replay-error { color: #a02d3f; font-size: 12px; }
 .final-score { margin: 17px 0; display: flex; align-items: center; justify-content: center; gap: 20px; }
@@ -497,7 +496,6 @@ button.player-altar:hover { border-radius: 8px; background: rgba(213,170,93,.08)
 .review-signals span { padding: 6px 9px; border-radius: 999px; color: #594663; background: white; font-size: 9px; }
 .post-game-review > small { color: #766c78; font-size: 10px; line-height: 1.4; }
 .replay-saved-note { margin: 0 0 13px; color: #39744f; font-size: 12px; font-weight: 750; }
-.replay-export-note { margin: -5px 0 13px; color: #316673; font-size: 12px; font-weight: 750; }
 .live-error { max-width: min(520px, calc(100vw - 24px)); padding: 12px 14px; position: fixed; right: 12px; top: 104px; z-index: 300; display: flex; align-items: center; gap: 12px; overflow: auto; border: 1px solid rgba(240,164,169,.36); border-radius: 10px; color: #ffdadd; background: rgba(92,28,42,.95); font-size: .75rem; }
 .live-error button { border: 0; color: white; background: transparent; font-size: 15px; }
 
