@@ -1,0 +1,311 @@
+.bar {
+  display: flex;
+  gap: 10px;
+  margin-top: 32px;
+}
+
+.field {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0 16px;
+  min-height: 52px;
+  border: var(--stroke) solid var(--ink);
+  border-radius: 999px;
+  background: var(--surface);
+  color: var(--text-3);
+  box-shadow: 2px 2px 0 rgb(28 23 16 / 0.18);
+  transition: box-shadow 0.16s ease, color 0.2s ease;
+}
+
+.field:focus-within {
+  color: var(--accent);
+  box-shadow: 3px 3px 0 var(--ink);
+}
+
+.input {
+  flex: 1;
+  min-width: 0;
+  appearance: none;
+  border: 0;
+  background: transparent;
+  color: var(--text);
+  font: inherit;
+  font-size: 15px;
+  padding: 14px 0;
+}
+
+.input::placeholder {
+  color: var(--text-3);
+}
+
+.input:focus {
+  outline: none;
+}
+
+.filtersToggle {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 20px;
+  min-height: 52px;
+  border-radius: 999px;
+  border: var(--stroke) solid var(--ink);
+  background: var(--surface);
+  color: var(--text);
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 17px;
+  cursor: pointer;
+  box-shadow: 2px 2px 0 var(--ink);
+}
+
+.filtersToggle:active {
+  transform: translate(2px, 2px);
+  box-shadow: 0 0 0 var(--ink);
+}
+
+.badge {
+  display: grid;
+  place-items: center;
+  min-width: 20px;
+  height: 20px;
+  padding-inline: 5px;
+  border-radius: 999px;
+  background: var(--accent);
+  color: #fdf6e6;
+  font-family: var(--font-mono);
+  font-size: 11px;
+}
+
+.filters {
+  display: none;
+  gap: 24px;
+  margin-top: 16px;
+  padding: 22px;
+  border: var(--stroke) solid var(--ink);
+  border-radius: var(--corner);
+  background: var(--surface);
+  box-shadow: var(--card-shadow);
+}
+
+.filters[data-open="true"] {
+  display: grid;
+}
+
+.group {
+  border: 0;
+  padding: 0;
+  margin: 0;
+  min-width: 0;
+}
+
+.legend {
+  padding: 0;
+  margin-bottom: 10px;
+  font-family: var(--font-display);
+  font-size: 13.5px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text-2);
+}
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.chip {
+  appearance: none;
+  padding: 8px 15px;
+  min-height: 40px;
+  border-radius: 999px;
+  border: var(--stroke) solid var(--ink);
+  background: var(--surface);
+  color: var(--text-2);
+  font-family: var(--font-display);
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.14s ease, box-shadow 0.14s ease, background-color 0.18s ease,
+    color 0.18s ease;
+}
+
+.chip:hover {
+  color: var(--text);
+  background: var(--surface-2);
+}
+
+.chip[aria-pressed="true"] {
+  background: var(--accent);
+  color: #fdf6e6;
+  box-shadow: 2px 2px 0 var(--ink);
+}
+
+.chip[data-form="Luce"][aria-pressed="true"] {
+  background: var(--form-light);
+  color: #fdf6e6;
+}
+
+.chip[data-form="Ombra"][aria-pressed="true"] {
+  background: var(--form-shadow);
+  color: #fdf6e6;
+}
+
+.chip[data-form="Duale"][aria-pressed="true"] {
+  background: var(--form-dual);
+  color: #fdf6e6;
+}
+
+.count {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-top: 26px;
+  padding-bottom: 14px;
+  border-bottom: var(--stroke) solid var(--line);
+  color: var(--text-3);
+  font-size: 13px;
+}
+
+.reset {
+  color: var(--accent);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.reset:hover {
+  text-decoration: underline;
+}
+
+.empty {
+  margin-top: 48px;
+  color: var(--text-2);
+  max-width: 48ch;
+}
+
+.grid {
+  list-style: none;
+  padding: 0;
+  margin: 28px 0 0;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px 14px;
+}
+
+.card {
+  display: grid;
+  gap: 8px;
+  align-content: start;
+  /* Tilt in 3D on hover, to match the card page. */
+  perspective: 900px;
+}
+
+.figure {
+  display: block;
+  position: relative;
+  transform-style: preserve-3d;
+  border-radius: 8px;
+  overflow: hidden;
+  line-height: 0;
+  border: var(--stroke) solid var(--ink);
+  box-shadow: 4px 5px 0 rgb(28 23 16 / 0.2);
+  transition: transform 0.32s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.32s ease;
+}
+
+.figure img {
+  width: 100%;
+  height: auto;
+}
+
+.card:hover .figure,
+.card:focus-visible .figure {
+  transform: translateY(-6px) rotateX(7deg) rotateY(-7deg) scale(1.02);
+}
+
+.card[data-form="Ombra"]:hover .figure,
+.card[data-form="Ombra"]:focus-visible .figure {
+  /* Ombra tilts the other way. */
+  transform: translateY(-6px) rotateX(-7deg) rotateY(8deg) scale(1.02);
+}
+
+/* Hard shadow in the Form colour (not a glow). */
+.card[data-form="Luce"]:hover .figure {
+  box-shadow: 6px 8px 0 var(--form-light);
+}
+.card[data-form="Ombra"]:hover .figure {
+  box-shadow: 6px 8px 0 var(--form-shadow);
+}
+.card[data-form="Duale"]:hover .figure {
+  box-shadow: 6px 8px 0 var(--form-dual);
+}
+
+.name {
+  font-family: var(--font-display);
+  font-size: 17px;
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+.meta {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 12px;
+  color: var(--text-3);
+}
+
+.stat {
+  color: var(--text-2);
+  font-weight: 600;
+}
+
+.form {
+  margin-left: auto;
+  padding: 1px 9px;
+  border-radius: 999px;
+  border: 1.2px solid currentColor;
+  font-family: var(--font-display);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.card[data-form="Luce"] .form {
+  color: var(--form-light);
+}
+.card[data-form="Ombra"] .form {
+  color: var(--form-shadow);
+}
+.card[data-form="Duale"] .form {
+  color: var(--form-dual);
+}
+
+@media (min-width: 620px) {
+  .grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+  .filters[data-open="true"] {
+    grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+  }
+}
+
+@media (min-width: 980px) {
+  .grid {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+  }
+  /* On desktop the filters are always open, not a drawer. */
+  .filters {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+  .filtersToggle {
+    display: none;
+  }
+}
