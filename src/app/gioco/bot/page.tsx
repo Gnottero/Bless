@@ -316,6 +316,14 @@ const ABILITY_HELP = [
 ] as const;
 const ABILITY_SPLIT_PATTERN = /(Rivalità|Impatto|Barriera|Fato|Schermatura|Emblema|Colosso|Cadenza)/gi;
 
+const PRAYER_TYPE_HELP: Record<string, string> = {
+  Eco: "Resta nella Zona Preghiere e può essere Invocata nei turni successivi spendendo 1 Azione.",
+  Impulso: "Risolve il proprio effetto quando viene giocata, poi viene messa nel Vuoto.",
+  Legame: "Si lega a una Maledizione e le trasferisce il proprio effetto Preghiera finché resta legata.",
+  Sigillo: "Entra Aperto. Quando è Chiuso perde il proprio effetto continuo; Invocarlo per riaprirlo costa 1 Azione.",
+  Glifo: "Il suo effetto si usa senza spendere Azioni pagando le Cariche indicate.",
+};
+
 function randomSeed(): number {
   return Math.floor(Math.random() * 2_147_483_646) + 1;
 }
@@ -629,6 +637,28 @@ function ExpandedLogDialog({ turns, onClose }: { turns: TurnLog[]; onClose: () =
 
 function TutorialCoach({ guide, minimized, onToggle }: { guide: TutorialGuide; minimized: boolean; onToggle: () => void }) {
   const drag = useDraggablePanel("tutorial-coach");
+  const [seenGuides, setSeenGuides] = useState<TutorialGuide[]>([guide]);
+  const [reviewIndex, setReviewIndex] = useState(0);
+  useEffect(() => {
+    setSeenGuides((current) => {
+      const existingIndex = current.findIndex((item) => item.step === guide.step);
+      if (existingIndex < 0) return [...current, guide];
+      const existing = current[existingIndex];
+      if (
+        existing.title === guide.title
+        && existing.body === guide.body
+        && existing.instruction === guide.instruction
+        && existing.complete === guide.complete
+      ) return current;
+      return current.map((item, index) => index === existingIndex ? guide : item);
+    });
+  }, [guide]);
+  useEffect(() => {
+    const currentIndex = seenGuides.findIndex((item) => item.step === guide.step);
+    if (currentIndex >= 0) setReviewIndex(currentIndex);
+  }, [guide.step, seenGuides]);
+  const displayedGuide = seenGuides[reviewIndex] ?? guide;
+  const reviewingPastStep = displayedGuide.step !== guide.step;
   const progress = Math.min(100, Math.max(0, (guide.progress / Math.max(1, guide.total)) * 100));
   if (minimized) {
     return (
@@ -645,7 +675,7 @@ function TutorialCoach({ guide, minimized, onToggle }: { guide: TutorialGuide; m
       aria-live="polite"
     >
       <div className="tutorial-coach-heading">
-        <span>{guide.complete ? "Tutorial completato" : `Passaggio ${guide.progress} di ${guide.total}`}</span>
+        <span>{reviewingPastStep ? `Ripasso · passaggio ${displayedGuide.progress}` : guide.complete ? "Tutorial completato" : `Passaggio ${guide.progress} di ${guide.total}`}</span>
         <div>
           <PanelDragHandle handleProps={drag.handleProps} />
           {!guide.complete && <b>{Math.round(progress)}%</b>}
@@ -653,21 +683,33 @@ function TutorialCoach({ guide, minimized, onToggle }: { guide: TutorialGuide; m
         </div>
       </div>
       {!guide.complete && <div className="tutorial-progress" aria-hidden="true"><i style={{ width: `${progress}%` }} /></div>}
-      <h2>{guide.title}</h2>
-      <p>{guide.body}</p>
-      {!guide.complete ? (
-        <div className="tutorial-instruction"><span>Adesso fai così</span><strong>{guide.instruction}</strong></div>
+      <h2>{displayedGuide.title}</h2>
+      <p>{displayedGuide.body}</p>
+      {!displayedGuide.complete ? (
+        <div className="tutorial-instruction"><span>{reviewingPastStep ? "In questo passaggio" : "Adesso fai così"}</span><strong>{displayedGuide.instruction}</strong></div>
       ) : (
         <div className="tutorial-finish-actions">
           <Link href="/gioco/bot?mazzo=Luce-Ombra">Gioca contro il Bot</Link>
           <Link href="/gioco">Torna alle modalità</Link>
         </div>
       )}
+      <div className="tutorial-coach-navigation" aria-label="Naviga tra le spiegazioni già viste">
+        <button type="button" disabled={reviewIndex === 0} onClick={() => setReviewIndex((value) => Math.max(0, value - 1))} aria-label="Spiegazione precedente">←</button>
+        <span>{reviewIndex + 1} / {seenGuides.length}</span>
+        <button type="button" disabled={reviewIndex >= seenGuides.length - 1} onClick={() => setReviewIndex((value) => Math.min(seenGuides.length - 1, value + 1))} aria-label="Spiegazione successiva">→</button>
+      </div>
     </aside>
   );
 }
 
 const TUTORIAL_CARD_PARTS = [
+  {
+    key: "flow",
+    eyebrow: "Prima di iniziare",
+    title: "Turni, Azioni e fine della partita",
+    body: "La partita procede a turni alternati. Nel tuo turno inizi normalmente con 3 Azioni, che puoi usare per Calare carte, rimuovere la Stasi, Attaccare o Invocare. Quando un giocatore porta la quinta carta nel proprio Altare si attivano i Turni Finali: al termine della loro sequenza la partita finisce e vince chi ha più Punti Vittoria.",
+    value: "3",
+  },
   {
     key: "eye",
     eyebrow: "1 · Occhio",
@@ -721,9 +763,9 @@ function TutorialIntro({ onStart }: { onStart: () => void }) {
     <div className="tutorial-intro-layer" role="dialog" aria-modal="true" aria-labelledby="tutorial-intro-title">
       <section className="tutorial-intro-card">
         <div className="tutorial-intro-heading">
-          <span className="choice-kicker">Prima di giocare · Com’è fatta una carta</span>
-          <h1 id="tutorial-intro-title">Leggiamo Orizzonte.</h1>
-          <p>Ti mostro una caratteristica alla volta. Durante la partita potrai passare il puntatore su qualunque carta per rileggerla nel pannello a destra.</p>
+          <span className="choice-kicker">{part.key === "flow" ? "Prima di giocare · Come funziona una partita" : "Prima di giocare · Com’è fatta una carta"}</span>
+          <h1 id="tutorial-intro-title">{part.key === "flow" ? "Partiamo dalle regole del tavolo." : "Leggiamo Orizzonte."}</h1>
+          <p>{part.key === "flow" ? "Prima di guardare la carta, vediamo il ritmo di ogni partita di Bless." : "Ti mostro una caratteristica alla volta. Durante la partita potrai passare il puntatore su qualunque carta per rileggerla nel pannello a destra."}</p>
         </div>
         <div
           className={`tutorial-card-lesson lesson-${part.key}`}
@@ -734,10 +776,18 @@ function TutorialIntro({ onStart }: { onStart: () => void }) {
           }}
           title="Clicca a sinistra per tornare indietro o a destra per avanzare"
         >
-          <div className="tutorial-card-visual">
-            <img src="/cards/23.jpg" alt="Carta Orizzonte" />
-            <span className={`tutorial-card-pin pin-${part.key}`}>{part.value}</span>
-          </div>
+          {part.key === "flow" ? (
+            <div className="tutorial-flow-overview" aria-label="Riepilogo del flusso di una partita">
+              <div><b>1</b><span><strong>Turni alternati</strong>Tu e l’avversario giocate uno dopo l’altro.</span></div>
+              <div><b>3</b><span><strong>Azioni iniziali</strong>Ogni tuo turno parte normalmente da 3 Azioni.</span></div>
+              <div><b>5</b><span><strong>Carte nell’Altare</strong>La quinta carta attiva i Turni Finali.</span></div>
+            </div>
+          ) : (
+            <div className="tutorial-card-visual">
+              <img src="/cards/23.jpg" alt="Carta Orizzonte" />
+              <span className={`tutorial-card-pin pin-${part.key}`}>{part.value}</span>
+            </div>
+          )}
           <div className="tutorial-card-explanation" key={part.key}>
             <span>{part.eyebrow}</span>
             <h2>{part.title}</h2>
@@ -757,9 +807,9 @@ function TutorialIntro({ onStart }: { onStart: () => void }) {
         </div>
         <div className="tutorial-intro-actions">
           <small>Clicca la metà sinistra o destra della spiegazione per muoverti. Nel tutorial saranno disponibili soltanto le mosse spiegate.</small>
-          {partIndex > 0 && <button type="button" className="tutorial-back" onClick={() => moveLesson(-1)}>Indietro</button>}
+          {partIndex > 0 && <button type="button" className="tutorial-back" onClick={() => moveLesson(-1)}>← Indietro</button>}
           <button type="button" onClick={() => moveLesson(1)}>
-            {lastPart ? "Inizia il tutorial" : "Avanti"}
+            {lastPart ? "Inizia il tutorial →" : "Avanti →"}
           </button>
         </div>
       </section>
@@ -1249,7 +1299,28 @@ function EffectText({ text }: { text: string }) {
   );
 }
 
-function CardInspector({ card, variant = "table", onClose }: { card: GameCard | null; variant?: "table" | "mulligan"; onClose?: () => void }) {
+function PrayerTypeTerm({ type }: { type?: string }) {
+  if (!type) return null;
+  const description = PRAYER_TYPE_HELP[type];
+  if (!description) return <>{type}</>;
+  return <AbilityTerm name={type} description={description}>{type}</AbilityTerm>;
+}
+
+function CardInspector({
+  card,
+  attachedPrayer,
+  variant = "table",
+  locked = false,
+  onToggleLock,
+  onClose,
+}: {
+  card: GameCard | null;
+  attachedPrayer?: GameCard | null;
+  variant?: "table" | "mulligan";
+  locked?: boolean;
+  onToggleLock?: () => void;
+  onClose?: () => void;
+}) {
   if (!card || card.hidden) return <div className="inspector-empty">Passa su una carta per leggerne gli effetti.</div>;
   const eye = card.eye ?? card.base_eye ?? 0;
   const karma = card.karma ?? card.base_karma ?? 0;
@@ -1260,7 +1331,12 @@ function CardInspector({ card, variant = "table", onClose }: { card: GameCard | 
   const showMaledictionEffect = !isPrayer;
   const showPrayerEffect = !isMalediction;
   return (
-    <article className={`card-inspector card-inspector-${variant} has-card`}>
+    <article className={`card-inspector card-inspector-${variant} has-card ${locked ? "is-locked" : ""}`}>
+      {onToggleLock && (
+        <button type="button" className="inspector-lock-button" aria-pressed={locked} onClick={onToggleLock}>
+          <span aria-hidden="true">{locked ? "●" : "○"}</span>{locked ? " Carta fissata" : " Fissa carta"}
+        </button>
+      )}
       {onClose && <button type="button" className="mobile-inspector-close" aria-label="Chiudi i dettagli della carta" onClick={onClose}>×</button>}
       <img src={card.image} alt={card.name} />
       <div className="card-inspector-copy">
@@ -1273,16 +1349,14 @@ function CardInspector({ card, variant = "table", onClose }: { card: GameCard | 
             <div
               className={`inspector-stat inspector-eye ${eyeChanged ? (eye > Number(card.base_eye) ? "stat-up" : "stat-down") : ""}`}
               aria-label={`Occhio ${eye}${eyeChanged ? `, valore originale ${card.base_eye}` : ""}`}
-              title={`Occhio${eyeChanged ? ` · Originale ${card.base_eye}` : ""}`}
             >
-              <b>{eye}</b>
+              <AbilityTerm name="Occhio" description={`Valore usato negli scontri tra Maledizioni. Di norma vince la carta con l'Occhio effettivo più alto.${eyeChanged ? ` Il valore originale di questa carta è ${card.base_eye}.` : ""}`}>{eye}</AbilityTerm>
             </div>
             <div
               className={`inspector-stat inspector-karma ${karmaChanged ? (karma > Number(card.base_karma) ? "stat-up" : "stat-down") : ""}`}
               aria-label={`Karma ${karma}${karmaChanged ? `, valore originale ${card.base_karma}` : ""}`}
-              title={`Karma${karmaChanged ? ` · Originale ${card.base_karma}` : ""}`}
             >
-              <b>{karma}</b>
+              <AbilityTerm name="Karma" description={`Numero di Punti Vittoria normalmente ottenuti quando questa Maledizione Blessa.${karmaChanged ? ` Il valore originale di questa carta è ${card.base_karma}.` : ""}`}>{karma}</AbilityTerm>
             </div>
           </div>
         </div>
@@ -1296,14 +1370,20 @@ function CardInspector({ card, variant = "table", onClose }: { card: GameCard | 
         <div className="inspector-effects">
           {isPrayer && card.open != null && (
             <span className={`inspector-prayer-state ${card.open ? "is-open" : "is-closed"}`}>
-              {card.prayer_type} {card.open ? "Aperto" : "Chiuso"}
+              <PrayerTypeTerm type={card.prayer_type} /> {card.open ? "Aperto" : "Chiuso"}
             </span>
           )}
           {Boolean(card.traits?.length) && (
             <p className="inspector-traits"><b>Tratto</b><span>{card.traits?.map((trait) => <strong key={trait} title={trait === "Esordio" ? "Dopo il Mulligan viene assegnata fuori dal Mazzo e può essere giocata gratuitamente o tenuta in Mano." : trait}>{trait}</strong>)}</span></p>
           )}
           {showMaledictionEffect && <p><b>Maledizione</b><EffectText text={card.malediction_text ?? ""} /></p>}
-          {showPrayerEffect && <p><b>Preghiera {card.prayer_type}</b><EffectText text={card.prayer_text ?? ""} /></p>}
+          {showMaledictionEffect && attachedPrayer && (
+            <div className="linked-prayer-effect">
+              <span>Effetto Preghiera trasferito</span>
+              <p><b>{attachedPrayer.name} · <PrayerTypeTerm type={attachedPrayer.prayer_type} /></b><EffectText text={attachedPrayer.prayer_text ?? ""} /></p>
+            </div>
+          )}
+          {showPrayerEffect && <p><b>Preghiera <PrayerTypeTerm type={card.prayer_type} /></b><EffectText text={card.prayer_text ?? ""} /></p>}
           {showPrayerEffect && card.prayer_type === "Sigillo" && <small className="prayer-rule-note">Sigillo: entra Aperto; da Chiuso perde il suo effetto continuo. Invocarlo per riaprirlo costa 1 Azione.</small>}
           {showPrayerEffect && card.prayer_type === "Glifo" && <small className="prayer-rule-note">Glifo: il suo effetto si usa senza spendere Azioni pagando le Cariche indicate. Puoi spendere 1 Carica per evitare che venga Spezzato.</small>}
         </div>
@@ -1473,6 +1553,7 @@ export default function PlayBlessPage() {
   const [selectedUid, setSelectedUid] = useState<number | null>(null);
   const [targetPlan, setTargetPlan] = useState<TargetPlan | null>(null);
   const [inspected, setInspected] = useState<GameCard | null>(null);
+  const [inspectorLockedUid, setInspectorLockedUid] = useState<number | null>(null);
   const [zoneModal, setZoneModal] = useState<ZoneModal>(null);
   const [logExpanded, setLogExpanded] = useState(false);
   const [fastBot, setFastBot] = useState(false);
@@ -1683,6 +1764,8 @@ export default function PlayBlessPage() {
     setMulliganMinimized(false);
     setTutorialCoachMinimized(false);
     setLogExpanded(false);
+    setInspected(null);
+    setInspectorLockedUid(null);
     setScreen("loading");
     setBusy(true);
     const worker = new Worker("/manual-worker.mjs", { type: "module" });
@@ -1740,6 +1823,8 @@ export default function PlayBlessPage() {
     setMulliganMinimized(false);
     setSelectedUid(null);
     setTargetPlan(null);
+    setInspected(null);
+    setInspectorLockedUid(null);
     setZoneModal(null);
     setLogExpanded(false);
     window.location.href = "/gioco";
@@ -1753,6 +1838,16 @@ export default function PlayBlessPage() {
     ...game.players[game.human_player].charges,
     ...game.void,
   ] : [], [game]);
+
+  const previewCard = (card: GameCard) => {
+    if (inspectorLockedUid == null && !card.hidden) setInspected(card);
+  };
+
+  const pinCard = (card: GameCard) => {
+    if (card.hidden) return;
+    setInspected(card);
+    setInspectorLockedUid(card.uid);
+  };
 
   const pendingTargets = useMemo(() => {
     if (game?.choice?.kind === "card") return new Set(game.choice.candidate_uids ?? []);
@@ -1773,7 +1868,7 @@ export default function PlayBlessPage() {
   };
 
   const handleCard = (card: GameCard) => {
-    setInspected(card.hidden ? null : card);
+    if (!card.hidden) pinCard(card);
     if (busy || !game) return;
     if (game.choice?.kind === "card" && (game.choice.candidate_uids ?? []).includes(card.uid)) {
       send({ type: "choice", value: card.uid });
@@ -1904,6 +1999,9 @@ export default function PlayBlessPage() {
   const inspectedLive = inspected
     ? allVisibleCards.find((card) => card.uid === inspected.uid) ?? inspected
     : null;
+  const attachedPrayer = inspectedLive?.zone === "maledizione"
+    ? allVisibleCards.find((card) => card.zone === "preghiera" && card.attached_to === inspectedLive.uid) ?? null
+    : null;
   const topVoidCard = game.void[0] ?? null;
   const finalsActivatedNow = game.final_turns_remaining != null && game.final_trigger_turn === game.turn;
   const turnLog = buildTurnLog(game.history, game.turn, game.active_player, game.players);
@@ -1978,7 +2076,7 @@ export default function PlayBlessPage() {
               card={topVoidCard}
               count={game.void.length}
               onOpen={() => setZoneModal("void")}
-              onInspect={() => topVoidCard && setInspected(topVoidCard)}
+              onInspect={() => topVoidCard && previewCard(topVoidCard)}
             />
             <CompactActionLog turns={turnLog} onExpand={() => setLogExpanded(true)} />
           </div>
@@ -1992,7 +2090,7 @@ export default function PlayBlessPage() {
             selectedUid={selectedUid}
             targetUids={pendingTargets}
             onCard={handleCard}
-            onInspect={setInspected}
+            onInspect={previewCard}
             finalsActivator={game.final_trigger_player === opponent.id}
             tutorialFocusUids={tutorialFocusUids}
           />
@@ -2013,7 +2111,7 @@ export default function PlayBlessPage() {
             selectedUid={selectedUid}
             targetUids={pendingTargets}
             onCard={handleCard}
-            onInspect={setInspected}
+            onInspect={previewCard}
             onOpenCharges={() => setZoneModal("charges")}
             finalsActivator={game.final_trigger_player === human.id}
             tutorialFocusUids={tutorialFocusUids}
@@ -2026,7 +2124,19 @@ export default function PlayBlessPage() {
         </section>
 
         <aside className="right-rail">
-          <CardInspector card={inspectedLive} onClose={() => setInspected(null)} />
+          <CardInspector
+            card={inspectedLive}
+            attachedPrayer={attachedPrayer}
+            locked={inspectorLockedUid != null}
+            onToggleLock={() => {
+              if (inspectorLockedUid != null) setInspectorLockedUid(null);
+              else if (inspectedLive) setInspectorLockedUid(inspectedLive.uid);
+            }}
+            onClose={() => {
+              setInspected(null);
+              setInspectorLockedUid(null);
+            }}
+          />
           <section className="side-hand-section">
             <div className="hand-heading">
               <div><span>La tua mano</span><strong>{human.hand.length} carte</strong></div>
@@ -2042,7 +2152,7 @@ export default function PlayBlessPage() {
                   targetable={pendingTargets.has(card.uid)}
                   tutorialFocused={tutorialFocusUids.has(card.uid)}
                   onClick={() => handleCard(card)}
-                  onInspect={() => setInspected(card)}
+                  onInspect={() => previewCard(card)}
                   dragProps={cardDrag.bindCard({
                     uid: card.uid,
                     label: card.name ?? "Carta Bless",
@@ -2171,7 +2281,7 @@ export default function PlayBlessPage() {
           cards={game.void}
           facedown={false}
           ordered
-          onInspect={setInspected}
+          onInspect={previewCard}
           playableUids={new Set(game.legal_actions.filter((action) => action.card_uid != null).map((action) => Number(action.card_uid)))}
           onPlay={(card) => {
             setZoneModal(null);

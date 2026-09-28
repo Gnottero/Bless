@@ -50,6 +50,11 @@ test("ships a deterministic guided Luce Ombra match on the real table", async ()
   assert.match(botPage, /tutorialFocusUids/);
   assert.match(botPage, /tutorialCoachMinimized/);
   assert.match(botPage, /moveLesson/);
+  assert.match(botPage, /Turni, Azioni e fine della partita/);
+  assert.match(botPage, /quinta carta nel proprio Altare/);
+  assert.match(botPage, /tutorial-coach-navigation/);
+  assert.match(botPage, /Spiegazione precedente/);
+  assert.match(botPage, /Spiegazione successiva/);
   assert.match(manual, /def _prepare_tutorial_opening/);
   assert.match(manual, /def _tutorial_opponent_action/);
   assert.match(manual, /TUTORIAL_FIRST_CURSE = 23/);
@@ -180,13 +185,35 @@ test("uses one unified table surface and keeps resources in their game zones", a
     assert.match(page, /card\.uid === firstGlyphUid/);
     assert.match(page, /kind === "prayer" && card\.open != null/);
     assert.match(page, /card\.zone === "maledizione"/);
-    assert.match(page, /ordered[^]*onInspect=\{setInspected\}/);
+    assert.match(page, /ordered[^]*onInspect=\{previewCard\}/);
   }
   assert.match(tableStyles, /grid-template-columns:\s*repeat\(var\(--hand-count\)/);
   assert.match(tableStyles, /\.battle-board\s*{[^}]*border:\s*0[^}]*box-shadow:\s*none/s);
   assert.match(tableStyles, /\.bot-field \.prayer-zone\s*{[^}]*grid-row:\s*1/s);
   assert.match(tableStyles, /\.bot-field \.malediction-zone\s*{[^}]*grid-row:\s*2/s);
   assert.match(tableStyles, /\.zone-list-position b/);
+});
+
+test("pins inspected cards and explains stats, prayer types and transferred Bonds", async () => {
+  const [botPage, roomPage, tableStyles] = await Promise.all([
+    text("../src/app/gioco/bot/page.tsx"),
+    text("../src/app/gioco/stanza/[code]/page.tsx"),
+    text("../src/app/gioco/bot/play.css"),
+  ]);
+
+  for (const page of [botPage, roomPage]) {
+    assert.match(page, /inspectorLockedUid/);
+    assert.match(page, /const previewCard/);
+    assert.match(page, /const pinCard/);
+    assert.match(page, /name="Occhio"/);
+    assert.match(page, /name="Karma"/);
+    assert.match(page, /PRAYER_TYPE_HELP/);
+    assert.match(page, /Effetto Preghiera trasferito/);
+    assert.match(page, /card\.attached_to === inspectedLive\.uid/);
+  }
+  assert.match(tableStyles, /\.inspector-lock-button/);
+  assert.match(tableStyles, /\.linked-prayer-effect/);
+  assert.match(tableStyles, /\.side-hand-section \.modern-hand[^}]*min-height:\s*210px/s);
 });
 
 test("uses a real pointer-driven card drag and keeps the Void readable and playable", async () => {

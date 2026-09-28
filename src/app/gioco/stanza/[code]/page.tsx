@@ -306,6 +306,14 @@ const ABILITY_HELP = [
 ] as const;
 const ABILITY_SPLIT_PATTERN = /(Rivalità|Impatto|Barriera|Fato|Schermatura|Emblema|Colosso|Cadenza)/gi;
 
+const PRAYER_TYPE_HELP: Record<string, string> = {
+  Eco: "Resta nella Zona Preghiere e può essere Invocata nei turni successivi spendendo 1 Azione.",
+  Impulso: "Risolve il proprio effetto quando viene giocata, poi viene messa nel Vuoto.",
+  Legame: "Si lega a una Maledizione e le trasferisce il proprio effetto Preghiera finché resta legata.",
+  Sigillo: "Entra Aperto. Quando è Chiuso perde il proprio effetto continuo; Invocarlo per riaprirlo costa 1 Azione.",
+  Glifo: "Il suo effetto si usa senza spendere Azioni pagando le Cariche indicate.",
+};
+
 function normalizeLogText(value: string): string {
   return value.trim().replace(/[.…]+$/u, "").toLocaleLowerCase("it");
 }
@@ -1082,7 +1090,28 @@ function EffectText({ text }: { text: string }) {
   );
 }
 
-function CardInspector({ card, variant = "table", onClose }: { card: GameCard | null; variant?: "table" | "mulligan"; onClose?: () => void }) {
+function PrayerTypeTerm({ type }: { type?: string }) {
+  if (!type) return null;
+  const description = PRAYER_TYPE_HELP[type];
+  if (!description) return <>{type}</>;
+  return <AbilityTerm name={type} description={description}>{type}</AbilityTerm>;
+}
+
+function CardInspector({
+  card,
+  attachedPrayer,
+  variant = "table",
+  locked = false,
+  onToggleLock,
+  onClose,
+}: {
+  card: GameCard | null;
+  attachedPrayer?: GameCard | null;
+  variant?: "table" | "mulligan";
+  locked?: boolean;
+  onToggleLock?: () => void;
+  onClose?: () => void;
+}) {
   if (!card || card.hidden) return <div className="inspector-empty">Passa su una carta per leggerne gli effetti.</div>;
   const eye = card.eye ?? card.base_eye ?? 0;
   const karma = card.karma ?? card.base_karma ?? 0;
@@ -1093,7 +1122,12 @@ function CardInspector({ card, variant = "table", onClose }: { card: GameCard | 
   const showMaledictionEffect = !isPrayer;
   const showPrayerEffect = !isMalediction;
   return (
-    <article className={`card-inspector card-inspector-${variant} has-card`}>
+    <article className={`card-inspector card-inspector-${variant} has-card ${locked ? "is-locked" : ""}`}>
+      {onToggleLock && (
+        <button type="button" className="inspector-lock-button" aria-pressed={locked} onClick={onToggleLock}>
+          <span aria-hidden="true">{locked ? "●" : "○"}</span>{locked ? " Carta fissata" : " Fissa carta"}
+        </button>
+      )}
       {onClose && <button type="button" className="mobile-inspector-close" aria-label="Chiudi i dettagli della carta" onClick={onClose}>×</button>}
       <img src={card.image} alt={card.name} />
       <div className="card-inspector-copy">
@@ -1106,16 +1140,14 @@ function CardInspector({ card, variant = "table", onClose }: { card: GameCard | 
             <div
               className={`inspector-stat inspector-eye ${eyeChanged ? (eye > Number(card.base_eye) ? "stat-up" : "stat-down") : ""}`}
               aria-label={`Occhio ${eye}${eyeChanged ? `, valore originale ${card.base_eye}` : ""}`}
-              title={`Occhio${eyeChanged ? ` · Originale ${card.base_eye}` : ""}`}
             >
-              <b>{eye}</b>
+              <AbilityTerm name="Occhio" description={`Valore usato negli scontri tra Maledizioni. Di norma vince la carta con l'Occhio effettivo più alto.${eyeChanged ? ` Il valore originale di questa carta è ${card.base_eye}.` : ""}`}>{eye}</AbilityTerm>
             </div>
             <div
               className={`inspector-stat inspector-karma ${karmaChanged ? (karma > Number(card.base_karma) ? "stat-up" : "stat-down") : ""}`}
               aria-label={`Karma ${karma}${karmaChanged ? `, valore originale ${card.base_karma}` : ""}`}
-              title={`Karma${karmaChanged ? ` · Originale ${card.base_karma}` : ""}`}
             >
-              <b>{karma}</b>
+              <AbilityTerm name="Karma" description={`Numero di Punti Vittoria normalmente ottenuti quando questa Maledizione Blessa.${karmaChanged ? ` Il valore originale di questa carta è ${card.base_karma}.` : ""}`}>{karma}</AbilityTerm>
             </div>
           </div>
         </div>
@@ -1129,14 +1161,20 @@ function CardInspector({ card, variant = "table", onClose }: { card: GameCard | 
         <div className="inspector-effects">
           {isPrayer && card.open != null && (
             <span className={`inspector-prayer-state ${card.open ? "is-open" : "is-closed"}`}>
-              {card.prayer_type} {card.open ? "Aperto" : "Chiuso"}
+              <PrayerTypeTerm type={card.prayer_type} /> {card.open ? "Aperto" : "Chiuso"}
             </span>
           )}
           {Boolean(card.traits?.length) && (
             <p className="inspector-traits"><b>Tratto</b><span>{card.traits?.map((trait) => <strong key={trait} title={trait === "Esordio" ? "Dopo il Mulligan viene assegnata fuori dal Mazzo e può essere giocata gratuitamente o tenuta in Mano." : trait}>{trait}</strong>)}</span></p>
           )}
           {showMaledictionEffect && <p><b>Maledizione</b><EffectText text={card.malediction_text ?? ""} /></p>}
-          {showPrayerEffect && <p><b>Preghiera {card.prayer_type}</b><EffectText text={card.prayer_text ?? ""} /></p>}
+          {showMaledictionEffect && attachedPrayer && (
+            <div className="linked-prayer-effect">
+              <span>Effetto Preghiera trasferito</span>
+              <p><b>{attachedPrayer.name} · <PrayerTypeTerm type={attachedPrayer.prayer_type} /></b><EffectText text={attachedPrayer.prayer_text ?? ""} /></p>
+            </div>
+          )}
+          {showPrayerEffect && <p><b>Preghiera <PrayerTypeTerm type={card.prayer_type} /></b><EffectText text={card.prayer_text ?? ""} /></p>}
           {showPrayerEffect && card.prayer_type === "Sigillo" && <small className="prayer-rule-note">Sigillo: entra Aperto; da Chiuso perde il suo effetto continuo. Invocarlo per riaprirlo costa 1 Azione.</small>}
           {showPrayerEffect && card.prayer_type === "Glifo" && <small className="prayer-rule-note">Glifo: il suo effetto si usa senza spendere Azioni pagando le Cariche indicate. Puoi spendere 1 Carica per evitare che venga Spezzato.</small>}
         </div>
@@ -1320,6 +1358,7 @@ export default function OnlineBlessRoomPage() {
   const [selectedUid, setSelectedUid] = useState<number | null>(null);
   const [targetPlan, setTargetPlan] = useState<TargetPlan | null>(null);
   const [inspected, setInspected] = useState<GameCard | null>(null);
+  const [inspectorLockedUid, setInspectorLockedUid] = useState<number | null>(null);
   const [zoneModal, setZoneModal] = useState<ZoneModal>(null);
   const [logExpanded, setLogExpanded] = useState(false);
   const [attackTrace, setAttackTrace] = useState<AttackTraceState | null>(null);
@@ -1372,6 +1411,7 @@ export default function OnlineBlessRoomPage() {
     setSelectedUid(null);
     setTargetPlan(null);
     setInspected(null);
+    setInspectorLockedUid(null);
     setZoneModal(null);
     setLogExpanded(false);
   }
@@ -1673,6 +1713,16 @@ export default function OnlineBlessRoomPage() {
     ...game.void,
   ] : [], [game]);
 
+  const previewCard = (card: GameCard) => {
+    if (inspectorLockedUid == null && !card.hidden) setInspected(card);
+  };
+
+  const pinCard = (card: GameCard) => {
+    if (card.hidden) return;
+    setInspected(card);
+    setInspectorLockedUid(card.uid);
+  };
+
   const pendingTargets = useMemo(() => {
     if (game?.choice?.kind === "card") return new Set(game.choice.candidate_uids ?? []);
     if (targetPlan) return new Set(targetPlan.actions.map((action) => Number(action.target_uid)).filter(Boolean));
@@ -1692,7 +1742,7 @@ export default function OnlineBlessRoomPage() {
   };
 
   const handleCard = (card: GameCard) => {
-    setInspected(card.hidden ? null : card);
+    if (!card.hidden) pinCard(card);
     if (busy || !game) return;
     if (game.choice?.kind === "card" && (game.choice.candidate_uids ?? []).includes(card.uid)) {
       send({ type: "choice", value: card.uid });
@@ -1862,6 +1912,9 @@ export default function OnlineBlessRoomPage() {
   const inspectedLive = inspected
     ? allVisibleCards.find((card) => card.uid === inspected.uid) ?? inspected
     : null;
+  const attachedPrayer = inspectedLive?.zone === "maledizione"
+    ? allVisibleCards.find((card) => card.zone === "preghiera" && card.attached_to === inspectedLive.uid) ?? null
+    : null;
   const topVoidCard = game.void[0] ?? null;
   const finalsActivatedNow = game.final_turns_remaining != null && game.final_trigger_turn === game.turn;
   const turnLog = buildTurnLog(game.history, game.turn, game.active_player, game.players);
@@ -1928,7 +1981,7 @@ export default function OnlineBlessRoomPage() {
               card={topVoidCard}
               count={game.void.length}
               onOpen={() => setZoneModal("void")}
-              onInspect={() => topVoidCard && setInspected(topVoidCard)}
+              onInspect={() => topVoidCard && previewCard(topVoidCard)}
             />
             <CompactActionLog turns={turnLog} onExpand={() => setLogExpanded(true)} />
           </div>
@@ -1942,7 +1995,7 @@ export default function OnlineBlessRoomPage() {
             selectedUid={selectedUid}
             targetUids={pendingTargets}
             onCard={handleCard}
-            onInspect={setInspected}
+            onInspect={previewCard}
             finalsActivator={game.final_trigger_player === opponent.id}
           />
 
@@ -1962,7 +2015,7 @@ export default function OnlineBlessRoomPage() {
             selectedUid={selectedUid}
             targetUids={pendingTargets}
             onCard={handleCard}
-            onInspect={setInspected}
+            onInspect={previewCard}
             onOpenCharges={() => setZoneModal("charges")}
             finalsActivator={game.final_trigger_player === human.id}
           />
@@ -1974,7 +2027,19 @@ export default function OnlineBlessRoomPage() {
         </section>
 
         <aside className="right-rail">
-          <CardInspector card={inspectedLive} onClose={() => setInspected(null)} />
+          <CardInspector
+            card={inspectedLive}
+            attachedPrayer={attachedPrayer}
+            locked={inspectorLockedUid != null}
+            onToggleLock={() => {
+              if (inspectorLockedUid != null) setInspectorLockedUid(null);
+              else if (inspectedLive) setInspectorLockedUid(inspectedLive.uid);
+            }}
+            onClose={() => {
+              setInspected(null);
+              setInspectorLockedUid(null);
+            }}
+          />
           <section className="side-hand-section">
             <div className="hand-heading">
               <div><span>La tua mano</span><strong>{human.hand.length} carte</strong></div>
@@ -1989,7 +2054,7 @@ export default function OnlineBlessRoomPage() {
                   selected={selectedUid === card.uid}
                   targetable={pendingTargets.has(card.uid)}
                   onClick={() => handleCard(card)}
-                  onInspect={() => setInspected(card)}
+                  onInspect={() => previewCard(card)}
                   dragProps={cardDrag.bindCard({
                     uid: card.uid,
                     label: card.name ?? "Carta Bless",
@@ -2116,7 +2181,7 @@ export default function OnlineBlessRoomPage() {
           cards={game.void}
           facedown={false}
           ordered
-          onInspect={setInspected}
+          onInspect={previewCard}
           playableUids={new Set(game.legal_actions.filter((action) => action.card_uid != null).map((action) => Number(action.card_uid)))}
           onPlay={(card) => {
             setZoneModal(null);

@@ -2707,6 +2707,39 @@ button.field-charge-pile:focus-visible .inspect-cue { transform: translate(-50%,
 .action-choice-list button,
 .combat-target-list button { height: auto; min-height: 58px; }
 
+.card-inspector.has-card { position: relative; }
+.card-inspector-table .card-inspector-copy { padding-top: 28px; }
+.inspector-lock-button {
+  min-height: 27px;
+  padding: 0 9px;
+  position: absolute;
+  right: 6px;
+  top: 4px;
+  z-index: 4;
+  color: #cfc3d1;
+  border: 1px solid rgba(255,255,255,.13);
+  border-radius: 999px;
+  background: rgba(255,255,255,.055);
+  font-size: .5625rem;
+  font-weight: 850;
+  letter-spacing: .035em;
+}
+.inspector-lock-button:hover,
+.inspector-lock-button[aria-pressed="true"] { color: #f4dc8f; border-color: rgba(244,220,143,.42); background: rgba(244,220,143,.1); }
+.inspector-stat .ability-term { width: 100%; height: 100%; padding: 0; display: grid; place-items: center; color: inherit; font-family: Arial, sans-serif; font-size: 23px; font-variant-numeric: tabular-nums; line-height: 1; text-align: center; text-decoration-color: currentColor; }
+.linked-prayer-effect { margin: 4px 0 12px; padding: 10px 11px; border-left: 3px solid #77c9dc; border-radius: 0 9px 9px 0; background: rgba(91,184,207,.09); }
+.linked-prayer-effect > span { display: block; margin-bottom: 5px; color: #8ad8e8; font-size: .5625rem; font-weight: 900; letter-spacing: .1em; text-transform: uppercase; }
+.linked-prayer-effect p { margin-bottom: 0; }
+
+@media (min-width: 1101px) and (min-height: 700px) {
+  .right-rail { grid-template-rows: minmax(240px, .82fr) minmax(250px, .88fr) minmax(146px, .52fr); }
+  .side-hand-section .modern-hand { min-height: 210px; padding: 18px 3px 34px; overflow: visible; }
+}
+
+@media (max-width: 760px) {
+  .inspector-lock-button { right: 56px; top: 13px; }
+}
+
 .void-modal-layer {
   --void-inspector-space: 0px;
   padding: 18px;
@@ -2938,6 +2971,10 @@ button.field-charge-pile:focus-visible .inspect-cue { transform: translate(-50%,
 .tutorial-finish-actions { display: flex; flex-wrap: wrap; gap: 8px; }
 .tutorial-finish-actions a { min-height: 40px; padding: 0 13px; display: inline-flex; align-items: center; justify-content: center; color: #241a29; border-radius: 9px; background: #f1d779; font-size: .6875rem; font-weight: 900; text-decoration: none; }
 .tutorial-finish-actions a + a { color: #f3eaf5; background: rgba(255,255,255,.1); }
+.tutorial-coach-navigation { display: grid; grid-template-columns: 38px minmax(54px, auto) 38px; align-items: center; justify-content: start; gap: 7px; }
+.tutorial-coach-navigation button { width: 38px; height: 32px; padding: 0; display: grid; place-items: center; color: #f8f1e6; border: 1px solid rgba(255,255,255,.15); border-radius: 8px; background: rgba(255,255,255,.07); font-size: 1rem; }
+.tutorial-coach-navigation button:disabled { opacity: .3; cursor: not-allowed; }
+.tutorial-coach-navigation span { color: #9f93a3; font-size: .625rem; font-weight: 800; text-align: center; }
 
 .tutorial-active .play-card.is-tutorial-focus { z-index: 48; filter: brightness(1.16) saturate(1.12); animation: tutorial-card-pulse 1.35s ease-in-out infinite; }
 .tutorial-active .play-card.is-tutorial-focus .play-card-shell { border-color: #ffe892; box-shadow: 0 0 0 3px rgba(247,217,120,.42), 0 0 28px rgba(247,217,120,.42), 0 10px 24px rgba(0,0,0,.45); }
@@ -2971,6 +3008,11 @@ button.field-charge-pile:focus-visible .inspect-cue { transform: translate(-50%,
 .tutorial-card-lesson:hover { border-color: rgba(247,217,120,.25); background: radial-gradient(circle at 21% 50%, rgba(247,217,120,.12), transparent 19rem), rgba(255,255,255,.035); }
 .tutorial-card-visual { width: min(245px, 100%); position: relative; justify-self: center; }
 .tutorial-card-visual > img { width: 100%; display: block; border-radius: 10px; box-shadow: 0 18px 40px rgba(0,0,0,.5); }
+.tutorial-flow-overview { width: min(300px, 100%); justify-self: center; display: grid; gap: 12px; }
+.tutorial-flow-overview > div { min-height: 82px; padding: 12px 14px; display: grid; grid-template-columns: 54px minmax(0,1fr); align-items: center; gap: 12px; border: 1px solid rgba(247,217,120,.2); border-radius: 14px; background: rgba(247,217,120,.055); }
+.tutorial-flow-overview b { width: 50px; height: 50px; display: grid; place-items: center; color: #241a29; border-radius: 50%; background: #f1d779; font-family: Georgia, serif; font-size: 1.45rem; }
+.tutorial-flow-overview span { color: #c9bdcd; font-size: .75rem; line-height: 1.35; }
+.tutorial-flow-overview strong { display: block; margin-bottom: 3px; color: #f7f0f8; font-size: .8125rem; }
 .tutorial-card-pin { min-width: 60px; min-height: 60px; padding: 9px; position: absolute; z-index: 2; display: grid; place-items: center; color: #241a29; border: 3px solid #fff8d8; border-radius: 50%; background: #f1d779; box-shadow: 0 0 0 7px rgba(247,217,120,.2), 0 9px 25px rgba(0,0,0,.45); font-size: 1.15rem; font-weight: 950; animation: tutorial-pin-arrive .35s ease both; }
 .pin-eye { left: -20px; top: -14px; }
 .pin-karma { right: -20px; top: -14px; }
@@ -2978,7 +3020,7 @@ button.field-charge-pile:focus-visible .inspect-cue { transform: translate(-50%,
 .pin-prayer { width: 88px; min-height: 48px; left: -26px; bottom: 12%; border-radius: 12px; font-size: .75rem; }
 .pin-form { width: 88px; min-height: 48px; right: -24px; top: 39%; border-radius: 12px; font-size: .75rem; }
 .tutorial-card-explanation { min-width: 0; display: grid; gap: 12px; animation: tutorial-copy-arrive .3s ease both; }
-.tutorial-card-explanation > span { color: #f1d779; font-size: .625rem; font-weight: 900; letter-spacing: .14em; text-transform: uppercase; }
+.tutorial-card-explanation > span { color: #f1d779; font-size: .875rem; font-weight: 900; letter-spacing: .1em; text-transform: uppercase; }
 .tutorial-card-explanation h2 { margin: 0; font-family: Georgia, serif; font-size: clamp(25px, 3vw, 40px); font-weight: 400; line-height: 1.05; }
 .tutorial-card-explanation p { max-width: 490px; margin: 0; color: #c9bdcd; font-size: .9375rem; line-height: 1.58; }
 .tutorial-part-dots { margin-top: 10px; display: flex; gap: 8px; }
@@ -3019,9 +3061,15 @@ button.field-charge-pile:focus-visible .inspect-cue { transform: translate(-50%,
   .tutorial-intro-heading p { font-size: .5625rem; line-height: 1.25; }
   .tutorial-card-lesson { min-height: 0; padding: 5px 12px; grid-template-columns: 120px minmax(0,1fr); gap: 22px; }
   .tutorial-card-visual { width: 94px; }
+  .tutorial-flow-overview { gap: 4px; }
+  .tutorial-flow-overview > div { min-height: 38px; padding: 4px 6px; grid-template-columns: 30px minmax(0,1fr); gap: 6px; border-radius: 7px; }
+  .tutorial-flow-overview b { width: 27px; height: 27px; font-size: .75rem; }
+  .tutorial-flow-overview span { font-size: .4375rem; line-height: 1.18; }
+  .tutorial-flow-overview strong { margin-bottom: 1px; font-size: .5rem; }
   .tutorial-card-pin { min-width: 35px; min-height: 35px; padding: 4px; border-width: 2px; box-shadow: 0 0 0 4px rgba(247,217,120,.2); font-size: .75rem; }
   .pin-effects,.pin-prayer,.pin-form { width: 58px; min-height: 29px; font-size: .5rem; }
   .tutorial-card-explanation { gap: 5px; }
+  .tutorial-card-explanation > span { font-size: .6875rem; }
   .tutorial-card-explanation h2 { font-size: 19px; }
   .tutorial-card-explanation p { font-size: .5625rem; line-height: 1.3; }
   .tutorial-part-dots { margin-top: 3px; }
