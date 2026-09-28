@@ -1,0 +1,427 @@
+/* ------------------------------- hero ------------------------------- */
+
+.hero {
+  position: relative;
+  padding-block: clamp(32px, 6vw, 72px) clamp(48px, 8vw, 96px);
+  overflow: hidden;
+}
+
+/* Light diagonal hatching behind the hero. */
+.hero::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 560px;
+  pointer-events: none;
+  opacity: 0.1;
+  background-image: repeating-linear-gradient(
+    -54deg,
+    var(--text) 0 1.1px,
+    transparent 1.1px 10px
+  );
+  mask-image: radial-gradient(ellipse 90% 100% at 50% 0%, #000 0%, transparent 76%);
+}
+
+.heroInner {
+  display: grid;
+  gap: clamp(24px, 5vw, 48px);
+  align-items: center;
+}
+
+.heroText {
+  display: grid;
+  gap: 0;
+  align-content: start;
+}
+
+.award {
+  margin-bottom: 20px;
+}
+
+.cta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 32px;
+}
+
+.facts {
+  display: grid;
+  /* Four columns are too cramped at 320px, go 2x2. */
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px 12px;
+  margin: 40px 0 0;
+  padding-top: 22px;
+  border-top: var(--stroke) solid var(--line);
+}
+
+/* Centre the number under its label. */
+.facts > div {
+  text-align: center;
+}
+
+.facts dt {
+  font-family: var(--font-display);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  /* letter-spacing adds space after the last letter too, which pushes the
+     text slightly left. This indent compensates for it. */
+  text-indent: 0.16em;
+  text-transform: uppercase;
+  color: var(--text-3);
+}
+
+.facts dd {
+  margin: 2px 0 0;
+  font-family: var(--font-display);
+  font-size: clamp(22px, 3.4vw, 28px);
+  font-weight: 700;
+}
+
+.heroDeck {
+  display: grid;
+  gap: 8px;
+  justify-items: center;
+}
+
+.hint {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: 15px;
+  color: var(--text-3);
+}
+
+/* ---------------------------- how to play ---------------------------- */
+
+.steps {
+  list-style: none;
+  padding: 0;
+  margin: 48px 0 0;
+  display: grid;
+  gap: 16px;
+}
+
+.step {
+  position: relative;
+  padding: 30px 24px 28px;
+  display: grid;
+  gap: 8px;
+  align-content: start;
+  transition: transform 0.14s ease, box-shadow 0.14s ease;
+}
+
+.step:hover {
+  transform: translate(1px, 1px);
+  box-shadow: 4px 5px 0 rgb(28 23 16 / 0.13);
+}
+
+/* Number badge in the corner of the tile. */
+.stepNumber {
+  position: absolute;
+  top: -15px;
+  left: 20px;
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  border: var(--stroke) solid var(--ink);
+  background: var(--accent);
+  color: #fdf6e6;
+  font-family: var(--font-display);
+  font-size: 17px;
+  font-weight: 700;
+  letter-spacing: 0;
+}
+
+.stepTitle {
+  margin-top: 8px;
+  font-size: 24px;
+}
+
+.stepText {
+  color: var(--text-2);
+  font-size: 15.5px;
+}
+
+.twoZones {
+  margin-top: clamp(56px, 8vw, 96px);
+  padding-top: clamp(40px, 6vw, 64px);
+  border-top: var(--stroke) solid var(--line);
+}
+
+.video {
+  margin-top: clamp(40px, 6vw, 72px);
+  max-width: 880px;
+}
+
+/* ------------------------------ product ------------------------------ */
+
+.product {
+  background: var(--bg-2);
+  border-block: var(--stroke) solid var(--line);
+}
+
+.productInner {
+  display: grid;
+  gap: clamp(32px, 6vw, 72px);
+  align-items: center;
+}
+
+.box {
+  justify-self: center;
+  max-width: 440px;
+  filter: drop-shadow(10px 14px 0 rgb(28 23 16 / 0.14));
+}
+
+.box img {
+  width: 100%;
+  height: auto;
+}
+
+.contents {
+  list-style: none;
+  padding: 0;
+  margin-top: 28px;
+  display: grid;
+  gap: 10px;
+}
+
+.contents li {
+  position: relative;
+  padding-left: 26px;
+  color: var(--text-2);
+}
+
+/* Hand-drawn tick instead of a bullet. */
+.contents li::before {
+  content: "";
+  position: absolute;
+  left: 2px;
+  top: 0.42em;
+  width: 13px;
+  height: 11px;
+  background: var(--accent);
+  clip-path: polygon(0 52%, 10% 40%, 38% 68%, 88% 0, 100% 12%, 40% 100%);
+}
+
+.priceRow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 20px;
+  margin-top: 32px;
+}
+
+.price {
+  font-family: var(--font-display);
+  font-size: 46px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.shopNote {
+  margin-top: 14px;
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: 14.5px;
+  color: var(--text-3);
+}
+
+/* ------------------------------- decks ------------------------------- */
+
+.decks {
+  display: grid;
+  gap: 16px;
+  margin-top: 44px;
+}
+
+.deck {
+  position: relative;
+  overflow: hidden;
+  padding: 28px 24px 30px;
+  display: grid;
+  gap: 12px;
+  justify-items: start;
+  align-content: start;
+}
+
+/* Deck colour as a soft wash at the top. */
+.deck::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 96px;
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--edge, var(--accent)) 24%, transparent),
+    transparent
+  );
+  pointer-events: none;
+}
+
+.deck > * {
+  position: relative;
+}
+
+.deck[data-form="Luce"] {
+  --edge: var(--form-light);
+}
+.deck[data-form="Duale"] {
+  --edge: var(--form-dual);
+}
+.deck[data-form="Ombra"] {
+  --edge: var(--form-shadow);
+}
+
+.status {
+  font-family: var(--font-display);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  padding: 3px 12px;
+  border-radius: 999px;
+  border: var(--stroke) solid var(--ink);
+  background: var(--surface);
+  color: var(--text-2);
+}
+
+.status[data-status="ok"] {
+  color: var(--form-light);
+}
+
+.status[data-status="pending"] {
+  color: var(--form-dual);
+}
+
+/* Not released yet: dashed border. */
+.status[data-status="upcoming"] {
+  color: var(--form-shadow);
+  border-style: dashed;
+}
+
+.deckName {
+  font-size: clamp(28px, 4.4vw, 38px);
+}
+
+.deckText {
+  color: var(--text-2);
+  font-size: 15.5px;
+  max-width: 44ch;
+  margin-bottom: 8px;
+}
+
+/* ----------------------------- preview ----------------------------- */
+
+.previewHeader {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 24px;
+}
+
+.grid {
+  list-style: none;
+  padding: 0;
+  margin: 44px 0 0;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.thumb {
+  display: grid;
+  gap: 10px;
+}
+
+.thumb img {
+  width: 100%;
+  height: auto;
+  border-radius: 8px;
+  border: var(--stroke) solid var(--ink);
+  box-shadow: 4px 5px 0 rgb(28 23 16 / 0.2);
+  transition: transform 0.16s ease, box-shadow 0.16s ease;
+}
+
+.thumb:hover img {
+  transform: translate(-2px, -3px);
+  box-shadow: 6px 8px 0 rgb(28 23 16 / 0.2);
+}
+
+.thumbName {
+  font-family: var(--font-display);
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text-2);
+  line-height: 1.25;
+}
+
+.thumb:hover .thumbName {
+  color: var(--accent);
+}
+
+/* ----------------------------- community ----------------------------- */
+
+.community {
+  display: grid;
+  gap: 24px;
+  padding: clamp(28px, 5vw, 48px);
+  background: color-mix(in srgb, var(--form-shadow) 10%, var(--surface));
+  align-items: center;
+}
+
+.communityTitle {
+  font-size: clamp(30px, 4.8vw, 44px);
+  margin-top: 12px;
+}
+
+.communityText {
+  margin-top: 14px;
+  color: var(--text-2);
+  max-width: 54ch;
+}
+
+/* ------------------------------ breakpoint ------------------------------ */
+
+@media (min-width: 420px) {
+  .facts {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 4px 12px;
+  }
+}
+
+@media (min-width: 700px) {
+  .grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+  .steps {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+  .decks {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 900px) {
+  .decks {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 1000px) {
+  .heroInner {
+    grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr);
+  }
+  .productInner {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr);
+  }
+  .grid {
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+  }
+  .community {
+    grid-template-columns: minmax(0, 1fr) auto;
+  }
+}

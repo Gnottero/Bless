@@ -1,0 +1,73 @@
+.ribbon {
+  position: relative;
+  z-index: 1;
+  overflow: hidden;
+  padding-block: 8px;
+  mask-image: linear-gradient(
+    90deg,
+    transparent,
+    #000 12%,
+    #000 88%,
+    transparent
+  );
+  border-block: var(--stroke) solid var(--ink);
+  background: var(--bg-2);
+}
+
+/* Doesn't pause on hover, it's just decoration, not a carousel. */
+.track {
+  display: flex;
+  gap: 14px;
+  width: max-content;
+  animation: scroll 64s linear infinite;
+}
+
+.slot {
+  flex: none;
+  width: 108px;
+  aspect-ratio: 1488 / 2079;
+  border-radius: 7px;
+  overflow: hidden;
+  line-height: 0;
+  border: var(--stroke) solid var(--ink);
+  box-shadow: 3px 3px 0 rgb(28 23 16 / 0.2);
+  transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.slot img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.slot[data-form="Luce"] {
+  box-shadow: 3px 3px 0 var(--form-light);
+}
+.slot[data-form="Ombra"] {
+  box-shadow: 3px 3px 0 var(--form-shadow);
+}
+.slot[data-form="Duale"] {
+  box-shadow: 3px 3px 0 var(--form-dual);
+}
+
+@keyframes scroll {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    /* Half the track minus half the gap, so the loop is seamless. */
+    transform: translate3d(calc(-50% - 7px), 0, 0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .track {
+    animation: none;
+  }
+}
+
+@media (min-width: 720px) {
+  .slot {
+    width: 132px;
+  }
+}

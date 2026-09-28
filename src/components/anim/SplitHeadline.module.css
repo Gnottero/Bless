@@ -1,0 +1,21 @@
+/* Normal case serif, no tight tracking. It used to be uppercase but that
+   fell apart at 320px. */
+.title {
+  font-family: var(--font-display);
+  font-size: clamp(44px, 10vw, 104px);
+  font-weight: 700;
+  letter-spacing: -0.015em;
+  line-height: 0.98;
+  overflow-wrap: break-word;
+}
+
+/* anime.js tags the pieces with data-word / data-char rather than classes. */
+.title :global([data-word]) {
+  display: inline-block;
+  white-space: nowrap;
+}
+
+.title :global([data-char]) {
+  display: inline-block;
+  will-change: transform;
+}

@@ -1,0 +1,84 @@
+.stage {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: min(100%, 560px);
+  /* Everything is sized relative to the width, height follows. */
+  aspect-ratio: 560 / 320;
+  margin-inline: auto;
+  touch-action: pan-y;
+  isolation: isolate;
+}
+
+/* Comic-style rays behind the fan. */
+.rays {
+  position: absolute;
+  width: min(620px, 108%);
+  aspect-ratio: 1;
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0.2;
+  background: repeating-conic-gradient(
+    from 0deg at 50% 52%,
+    var(--accent) 0deg 1.1deg,
+    transparent 1.1deg 7deg
+  );
+  mask-image: radial-gradient(circle at 50% 52%, transparent 24%, #000 42%, transparent 68%);
+}
+
+.card {
+  position: absolute;
+  /* 164/560, so the middle card is a bit under a third of the stage. */
+  width: 29.5%;
+  aspect-ratio: 1488 / 2079;
+  border-radius: 9px;
+  overflow: hidden;
+  cursor: grab;
+  will-change: transform;
+  border: var(--stroke) solid var(--ink);
+  box-shadow: 4px 5px 0 rgb(28 23 16 / 0.22);
+  background: var(--surface);
+  line-height: 0;
+}
+
+.card:active {
+  cursor: grabbing;
+}
+
+.card img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+.card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+}
+
+.card[data-form="Luce"] {
+  --glow: var(--form-light);
+}
+.card[data-form="Ombra"] {
+  --glow: var(--form-shadow);
+}
+.card[data-form="Duale"] {
+  --glow: var(--form-dual);
+}
+
+.card:focus-visible::after {
+  box-shadow: inset 0 0 0 3px var(--glow, var(--accent));
+}
+
+/* Squeeze the fan a bit below 380px, otherwise it's a mess. */
+@media (max-width: 380px) {
+  .stage {
+    width: 108%;
+    margin-inline: -4%;
+  }
+}

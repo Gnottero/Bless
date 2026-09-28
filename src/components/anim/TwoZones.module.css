@@ -1,0 +1,144 @@
+.block {
+  display: grid;
+  gap: 32px;
+  align-items: center;
+}
+
+.stage {
+  display: grid;
+  place-items: center;
+}
+
+/* 3D stage fills the column, up to a max width. */
+.stage > * {
+  width: clamp(210px, 58vw, 300px);
+}
+
+.side {
+  display: grid;
+  gap: 18px;
+  align-content: start;
+}
+
+/* Zone tabs. The active one sits on top and gets the hard shadow. */
+.tabs {
+  display: inline-flex;
+  gap: 8px;
+  justify-self: start;
+  max-width: 100%;
+  flex-wrap: wrap;
+}
+
+.tab {
+  appearance: none;
+  padding: 9px 18px;
+  min-height: 42px;
+  border: var(--stroke) solid var(--ink);
+  border-radius: 999px;
+  background: var(--surface);
+  color: var(--text-2);
+  font-family: var(--font-display);
+  font-size: 16.5px;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 2px 2px 0 rgb(28 23 16 / 0.18);
+  transition: transform 0.14s ease, box-shadow 0.14s ease, background-color 0.2s ease,
+    color 0.2s ease;
+}
+
+.tab:hover {
+  transform: translate(1px, 1px);
+  box-shadow: 1px 1px 0 rgb(28 23 16 / 0.18);
+}
+
+.tabActive {
+  background: var(--accent);
+  color: #fdf6e6;
+  box-shadow: 3px 3px 0 var(--ink);
+}
+
+.tabActive:hover {
+  box-shadow: 2px 2px 0 var(--ink);
+}
+
+.panel {
+  min-height: 215px;
+}
+
+.title {
+  font-size: clamp(24px, 3.6vw, 32px);
+}
+
+/* Effect text quoted from the card. */
+.effect {
+  margin-top: 14px;
+  font-family: var(--font-display);
+  font-size: clamp(20px, 2.8vw, 25px);
+  line-height: 1.38;
+  white-space: pre-line;
+}
+
+/* Prayer type with its icon (Impulso, Eco, Legame). */
+.type {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin-top: 14px;
+  padding: 11px 14px;
+  border: 1.5px dashed var(--type-color, var(--accent));
+  border-radius: var(--corner-sm);
+  background: color-mix(in srgb, var(--type-color, var(--accent)) 8%, transparent);
+  font-size: 13.5px;
+  line-height: 1.5;
+  color: var(--text-2);
+}
+
+.type[data-type="Impulso"] {
+  --type-color: var(--impulse);
+}
+
+.type[data-type="Eco"] {
+  --type-color: var(--echo);
+}
+
+.type[data-type="Legame"] {
+  --type-color: var(--bond);
+}
+
+.type strong {
+  color: var(--type-color);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 12.5px;
+}
+
+.typeIcon {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  flex: none;
+  border-radius: 50%;
+  border: var(--stroke) solid var(--type-color);
+  color: var(--type-color);
+}
+
+.note {
+  margin-top: 14px;
+  color: var(--text-2);
+  font-size: 15px;
+}
+
+.source {
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--text-3);
+  max-width: 52ch;
+}
+
+@media (min-width: 860px) {
+  .block {
+    grid-template-columns: minmax(0, 330px) minmax(0, 1fr);
+    gap: 56px;
+  }
+}
