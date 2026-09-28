@@ -1,10 +1,8 @@
 /**
  * Client side of the online simulator.
  *
- * The simulator (bot table, private rooms, match API) is a separate app
- * served from this same domain: /gioco only launches it. Paths, storage keys
- * and payloads below are its contract, so they must match the simulator's
- * code. Change them there first.
+ * The table, private rooms and match API are served by this same application.
+ * Paths, storage keys and payloads below are their shared contract.
  *
  * Browser only: every function touches `window`.
  */

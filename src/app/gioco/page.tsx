@@ -5,11 +5,7 @@ import { OG_BASE, OG_IMAGE, PRODUCT } from "@/lib/site";
 import PlayLauncher from "./PlayLauncher";
 import styles from "./page.module.css";
 
-/**
- * Launcher for the online simulator: deck, bot or private room, match
- * archive. The simulator itself (bot table, rooms, /api/game) is a separate
- * app on this same domain; `PlayLauncher` hands off to it.
- */
+/** Launcher for the game now hosted directly inside the official site. */
 
 export const metadata: Metadata = {
   title: { absolute: "Gioca a Bless online, gratis · Bless" },

@@ -1,0 +1,10 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "framework": "nextjs",
+  "functions": {
+    "api/game.py": {
+      "maxDuration": 30,
+      "includeFiles": "api/_engine/**"
+    }
+  }
+}

@@ -60,6 +60,12 @@ const ICONS = {
     </>
   ),
   link: <path d="M9 17H7A5 5 0 0 1 7 7h2M15 7h2a5 5 0 1 1 0 10h-2M8 12h8" />,
+  book: (
+    <>
+      <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
+      <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2Z" />
+    </>
+  ),
   download: <path d="M12 15V3M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5" />,
   check: <path d="M20 6 9 17l-5-5" />,
 } satisfies Record<string, ReactNode>;
@@ -142,7 +148,7 @@ export default function PlayLauncher() {
     try {
       const room = await createRoom(name.trim() || DEFAULT_NAME);
       rememberRoomAccess(room.code, room.token);
-      // The room page belongs to the simulator, not to this app: full load.
+      // A full load keeps the room hand-off predictable after its token is saved.
       window.location.assign(roomUrl(room.code));
     } catch (err) {
       setError(err instanceof Error ? err.message : "Non è stato possibile creare la stanza.");
@@ -259,6 +265,28 @@ export default function PlayLauncher() {
                 </p>
               )}
             </form>
+          </article>
+
+          <article className={`panel ${styles.mode} ${styles.tutorialMode}`}>
+            <span className={styles.modeIcon}>
+              <Icon name="book" size={28} />
+            </span>
+            <p className={styles.tag}>Prima partita · Luce e Ombra</p>
+            <h3 className={styles.modeTitle}>Gioca il tutorial</h3>
+            <p className={styles.modeText}>
+              Impara direttamente sul tavolo con una partita guidata: Mulligan, Stasi,
+              Invocazione, combattimento, Corruzione, Bless, Impulso e Legame.
+            </p>
+            <p className={styles.chosen}>
+              <span>Mazzo del tutorial</span>
+              <strong>Luce · Ombra</strong>
+            </p>
+            <a
+              href="/gioco/bot?tutorial=1&mazzo=Luce-Ombra"
+              className={`btn ${styles.action}`}
+            >
+              Fai una prova guidata <span aria-hidden="true">→</span>
+            </a>
           </article>
         </div>
       </section>

@@ -4,8 +4,12 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
+    "dev:game-api": "python api/game.py",
     "build": "next build",
-    "start": "next start"
+    "start": "next start",
+    "sync:server-engine": "python scripts/sync_server_engine.py",
+    "test:engine": "python tests/game-engine/run_python_tests.py",
+    "test:web": "node --test tests/game-web.test.mjs tests/game-stability.test.mjs"
   },
   "dependencies": {
     "animejs": "^4.0.2",
@@ -21,5 +25,8 @@
     "@types/react-dom": "^19.1.7",
     "@types/three": "^0.186.0",
     "typescript": "^5.7.2"
+  },
+  "overrides": {
+    "postcss": "8.5.28"
   }
 }
