@@ -31,6 +31,21 @@
   --form-dual: #9a4420;
   --form-dual-wash: #f7dac6;
 
+  /* --- Deck colours (deck picker in /gioco) ---
+     LuceOmbra: the gold and violet of its card frames.
+     TuonoSabbia: pastel sky blue and sand yellow. The pastel is too light
+     for text, so `--deck-thunder-ink` (same hue, darker) takes its place
+     where the colour carries text: buttons, labels, the check. */
+  --deck-light: #d9a520;
+  --deck-light-wash: #f8e7a8;
+  --deck-shadow: var(--form-shadow);
+  --deck-shadow-wash: #ddd3f5;
+  --deck-thunder: #9fd3ea;
+  --deck-thunder-ink: #2b6482;
+  --deck-thunder-wash: #dcf0f8;
+  --deck-sand: #c9a45a;
+  --deck-sand-wash: #f1e1b5;
+
   /* --- Prayer type inks --- */
   --impulse: #845010;
   --echo: #13606c;

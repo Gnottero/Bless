@@ -1,0 +1,432 @@
+/*
+ * Each deck has two tones: `--tone-a` is the strong one (dark enough for
+ * light text, it becomes the accent), `--tone-b` the second colour.
+ * `--pair` / `--pair-wash` are the two in the order of the deck's name, as
+ * gradient stops. Set on each deck tile, and on the launcher for the
+ * selected deck, so buttons and details follow the choice.
+ */
+
+.launcher[data-deck="Luce-Ombra"],
+.deck[data-deck="Luce-Ombra"] {
+  --tone-a: var(--deck-shadow);
+  --tone-a-wash: var(--deck-shadow-wash);
+  --tone-b: var(--deck-light);
+  --tone-b-wash: var(--deck-light-wash);
+  --pair: var(--deck-light) 0 50%, var(--deck-shadow) 50% 100%;
+  --pair-wash: var(--deck-light-wash) 0 38%, var(--deck-shadow-wash) 54% 100%;
+}
+
+.launcher[data-deck="TuonoSabbia"],
+.deck[data-deck="TuonoSabbia"] {
+  --tone-a: var(--deck-thunder-ink);
+  --tone-a-wash: var(--deck-thunder-wash);
+  --tone-b: var(--deck-sand);
+  --tone-b-wash: var(--deck-sand-wash);
+  --pair: var(--deck-thunder) 0 50%, var(--deck-sand) 50% 100%;
+  --pair-wash: var(--deck-thunder-wash) 0 38%, var(--deck-sand-wash) 54% 100%;
+}
+
+.launcher {
+  --accent: var(--tone-a);
+}
+
+.block {
+  margin-top: clamp(48px, 7vw, 80px);
+}
+
+/* ------------------------------ step heading ------------------------------ */
+
+.step {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.stepNumber {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 46px;
+  height: 46px;
+  border: var(--stroke) solid var(--ink);
+  border-radius: 50%;
+  background: var(--tone-b-wash);
+  box-shadow: 2px 2px 0 var(--ink);
+  font-family: var(--font-mono);
+  font-size: 14px;
+  font-weight: 700;
+  transition: background-color 0.25s ease;
+}
+
+.kicker {
+  font-family: var(--font-display);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text-3);
+}
+
+.h2 {
+  font-size: clamp(22px, 3.4vw, 32px);
+}
+
+/* ------------------------------ deck picker ------------------------------ */
+
+.decks {
+  display: grid;
+  gap: 16px;
+  margin-top: 24px;
+}
+
+.deck {
+  position: relative;
+  overflow: hidden;
+  display: grid;
+  gap: 4px;
+  align-content: start;
+  padding: 24px 24px 26px 96px;
+  min-height: 132px;
+  border: var(--stroke) solid var(--ink);
+  border-radius: var(--corner);
+  background: var(--surface);
+  box-shadow: var(--card-shadow);
+  cursor: pointer;
+  transition: transform 0.14s ease, box-shadow 0.14s ease, background-color 0.2s ease;
+}
+
+/* The two deck colours as a diagonal wash, only full on the selected deck. */
+.deck::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(120deg, var(--pair-wash));
+  opacity: 0.35;
+  transition: opacity 0.2s ease;
+}
+
+.deck > * {
+  position: relative;
+}
+
+.deck:hover::before {
+  opacity: 0.6;
+}
+
+.deck:has(:checked) {
+  transform: translate(-2px, -2px);
+  box-shadow: 6px 7px 0 var(--tone-a);
+}
+
+.deck:has(:checked)::before {
+  opacity: 1;
+}
+
+.deck:has(:focus-visible) {
+  outline: 2.5px solid var(--tone-a);
+  outline-offset: 4px;
+}
+
+/* The radio stays in the page for keyboard and screen readers. */
+.deckInput {
+  position: absolute;
+  opacity: 0;
+  width: 1px;
+  height: 1px;
+  margin: 0;
+}
+
+/* Two-tone seal, in the order of the deck's name. */
+.deckEmblem {
+  position: absolute;
+  left: 24px;
+  top: 24px;
+  width: 52px;
+  height: 52px;
+  border: var(--stroke) solid var(--ink);
+  border-radius: 50%;
+  background: linear-gradient(90deg, var(--pair));
+  box-shadow: 2px 2px 0 var(--ink);
+  transform: rotate(-24deg);
+}
+
+.deckEmblem::after {
+  content: "";
+  position: absolute;
+  inset: 9px;
+  border: 1.5px solid rgb(253 246 230 / 0.75);
+  border-radius: 50%;
+}
+
+.deckCheck {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border: var(--stroke) solid var(--ink);
+  border-radius: 50%;
+  background: var(--surface);
+  color: transparent;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.deck:has(:checked) .deckCheck {
+  background: var(--tone-a);
+  color: #fdf6e6;
+}
+
+.deckSubtitle {
+  font-family: var(--font-display);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--tone-a);
+  padding-right: 36px;
+}
+
+.deckTitle {
+  font-family: var(--font-display);
+  font-size: 26px;
+  font-weight: 600;
+  line-height: 1.15;
+}
+
+.deckText {
+  color: var(--text-2);
+  font-size: 15px;
+  margin-top: 4px;
+}
+
+/* --------------------------------- modes --------------------------------- */
+
+.modes {
+  display: grid;
+  gap: 16px;
+  margin-top: 24px;
+}
+
+.mode {
+  position: relative;
+  overflow: hidden;
+  padding: 26px 24px 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* Thin two-tone band on top, recoloured by the selected deck. */
+.mode::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto;
+  height: 7px;
+  border-bottom: var(--stroke) solid var(--ink);
+  background: linear-gradient(90deg, var(--pair));
+}
+
+.modeIcon {
+  display: grid;
+  place-items: center;
+  width: 54px;
+  height: 54px;
+  margin: 6px 0 6px;
+  border: var(--stroke) solid var(--ink);
+  border-radius: var(--corner-sm);
+  background: var(--tone-b-wash);
+  color: var(--tone-a);
+  transition: background-color 0.25s ease, color 0.25s ease;
+}
+
+.tag {
+  font-family: var(--font-display);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+.modeTitle {
+  font-size: 24px;
+}
+
+.modeText {
+  color: var(--text-2);
+  font-size: 15.5px;
+  max-width: 52ch;
+}
+
+.chosen {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 4px 12px;
+  margin-top: auto;
+  padding: 12px 16px;
+  border: 1px dashed var(--line);
+  border-radius: var(--corner-sm);
+  background: color-mix(in srgb, var(--tone-a-wash) 55%, transparent);
+  font-size: 14px;
+  color: var(--text-2);
+  transition: background-color 0.25s ease;
+}
+
+.chosen strong {
+  font-family: var(--font-display);
+  font-size: 19px;
+  color: var(--text);
+}
+
+.action {
+  align-self: flex-start;
+  margin-top: 8px;
+}
+
+.action:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+  transform: none;
+  box-shadow: 3px 3px 0 var(--ink);
+}
+
+.action:disabled::before,
+.action:disabled::after {
+  display: none;
+}
+
+.invite {
+  display: grid;
+  gap: 8px;
+  margin-top: auto;
+}
+
+.fieldLabel {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-2);
+}
+
+.field {
+  appearance: none;
+  width: 100%;
+  min-height: 48px;
+  padding: 10px 16px;
+  border: var(--stroke) solid var(--ink);
+  border-radius: 999px;
+  background: var(--surface);
+  color: var(--text);
+  font: inherit;
+  font-size: 16px;
+  transition: box-shadow 0.12s ease;
+}
+
+.field::placeholder {
+  color: var(--text-3);
+}
+
+.field:focus-visible {
+  outline: none;
+  box-shadow: 3px 3px 0 var(--tone-a);
+}
+
+.spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid currentColor;
+  border-right-color: transparent;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(1turn);
+  }
+}
+
+.error {
+  font-size: 14.5px;
+  color: var(--form-dual);
+}
+
+/* -------------------------------- archive -------------------------------- */
+
+.archive {
+  margin-top: 24px;
+  padding: clamp(24px, 4vw, 36px);
+  display: grid;
+  gap: 20px;
+  align-items: start;
+}
+
+.archiveCopy {
+  display: grid;
+  gap: 10px;
+}
+
+.replays {
+  list-style: none;
+  padding: 0;
+  margin-top: 6px;
+  border-top: 1px dashed var(--line);
+  font-size: 14.5px;
+}
+
+.replays li {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 2px 16px;
+  padding: 8px 0;
+  border-bottom: 1px dashed var(--line);
+}
+
+.replays time {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  color: var(--text-3);
+}
+
+.status {
+  font-size: 14.5px;
+  color: var(--text-2);
+}
+
+/* Empty until an export: out of the flow, so it doesn't add a gap, but
+   still in the page as a live region. */
+.status:empty {
+  position: absolute;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .spinner {
+    animation-duration: 2.4s;
+  }
+  .deck,
+  .deck::before {
+    transition: none;
+  }
+}
+
+@media (min-width: 700px) {
+  .decks,
+  .modes {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 900px) {
+  .archive {
+    grid-template-columns: minmax(0, 1fr) auto;
+  }
+
+  .archive .action {
+    margin-top: 0;
+  }
+}
