@@ -1,0 +1,98 @@
+.footer {
+  position: relative;
+  z-index: 1;
+  border-top: var(--stroke) solid var(--ink);
+  background: var(--bg-2);
+  margin-top: 56px;
+}
+
+.inner {
+  display: grid;
+  gap: 40px;
+  padding-block: 56px 40px;
+}
+
+.brand {
+  display: grid;
+  gap: 18px;
+  justify-items: start;
+  max-width: 34ch;
+}
+
+.logo {
+  line-height: 0;
+}
+
+.logo img {
+  /* logo-footer.png is the square icon, not the wordmark. */
+  width: 72px;
+  height: auto;
+}
+
+.claim {
+  color: var(--text-2);
+  font-size: 15px;
+}
+
+.columns {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 32px;
+}
+
+.colTitle {
+  font-family: var(--font-display);
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--text);
+  margin-bottom: 12px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--line);
+}
+
+.colList {
+  list-style: none;
+  padding: 0;
+  display: grid;
+  gap: 10px;
+}
+
+.colLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 15px;
+  color: var(--text-2);
+  transition: color 0.16s ease;
+}
+
+.colLink:hover {
+  color: var(--accent);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.ext {
+  font-size: 12px;
+  opacity: 0.7;
+}
+
+.base {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 12px;
+  padding-block: 20px 36px;
+  border-top: 1px solid var(--line);
+  color: var(--text-3);
+  font-size: 12.5px;
+}
+
+@media (min-width: 900px) {
+  .inner {
+    grid-template-columns: minmax(260px, 1fr) 1.5fr;
+    gap: 64px;
+  }
+}

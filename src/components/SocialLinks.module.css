@@ -1,0 +1,34 @@
+.list {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.link {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 999px;
+  border: var(--stroke) solid var(--ink);
+  color: var(--text);
+  background: var(--surface);
+  box-shadow: 2px 2px 0 var(--ink);
+  transition: transform 0.14s ease, box-shadow 0.14s ease, background-color 0.18s ease;
+}
+
+.link:hover {
+  background: var(--accent);
+  color: #fdf6e6;
+  transform: translate(1px, 1px);
+  box-shadow: 1px 1px 0 var(--ink);
+}
+
+.link:active {
+  transform: translate(2px, 2px);
+  box-shadow: 0 0 0 var(--ink);
+}
+
