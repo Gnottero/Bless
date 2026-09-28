@@ -4,7 +4,8 @@
   "functions": {
     "api/game.py": {
       "maxDuration": 30,
-      "includeFiles": "api/_engine/**"
+      "includeFiles": "api/_engine/**",
+      "excludeFiles": "{.next/**,node_modules/**,public/**,src/**,app/**,components/**,data/**,docs/**,tests/**,scripts/**,.npm-cache/**}"
     }
   }
 }

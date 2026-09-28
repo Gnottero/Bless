@@ -22,9 +22,6 @@ from urllib.parse import parse_qs, urlparse
 
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
-ENGINE_ROOT = PROJECT_ROOT / "public" / "python"
-if str(ENGINE_ROOT) not in sys.path:
-    sys.path.insert(0, str(ENGINE_ROOT))
 if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 
