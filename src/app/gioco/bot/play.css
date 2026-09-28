@@ -3004,7 +3004,7 @@ button.field-charge-pile:focus-visible .inspect-cue { transform: translate(-50%,
 .tutorial-intro-heading { display: grid; gap: 7px; }
 .tutorial-intro-heading h1 { margin: 0; font-family: Georgia, serif; font-size: clamp(34px, 4vw, 54px); font-weight: 400; letter-spacing: -.04em; }
 .tutorial-intro-heading p { max-width: 760px; margin: 0; color: #cfc3d1; font-size: .875rem; line-height: 1.5; }
-.tutorial-card-lesson { min-height: 390px; padding: 18px; display: grid; grid-template-columns: minmax(210px, .72fr) minmax(0, 1.28fr); align-items: center; gap: clamp(24px, 5vw, 60px); border: 1px solid rgba(255,255,255,.08); border-radius: 18px; background: radial-gradient(circle at 21% 50%, rgba(247,217,120,.09), transparent 19rem), rgba(255,255,255,.025); cursor: ew-resize; transition: border-color .2s ease, background .2s ease; }
+.tutorial-card-lesson { min-height: 390px; padding: 18px; display: grid; grid-template-columns: minmax(210px, .72fr) minmax(0, 1.28fr); align-items: center; gap: clamp(24px, 5vw, 60px); border: 1px solid rgba(255,255,255,.08); border-radius: 18px; background: radial-gradient(circle at 21% 50%, rgba(247,217,120,.09), transparent 19rem), rgba(255,255,255,.025); transition: border-color .2s ease, background .2s ease; }
 .tutorial-card-lesson:hover { border-color: rgba(247,217,120,.25); background: radial-gradient(circle at 21% 50%, rgba(247,217,120,.12), transparent 19rem), rgba(255,255,255,.035); }
 .tutorial-card-visual { width: min(245px, 100%); position: relative; justify-self: center; }
 .tutorial-card-visual > img { width: 100%; display: block; border-radius: 10px; box-shadow: 0 18px 40px rgba(0,0,0,.5); }

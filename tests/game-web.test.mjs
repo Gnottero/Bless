@@ -55,6 +55,8 @@ test("ships a deterministic guided Luce Ombra match on the real table", async ()
   assert.match(botPage, /tutorial-coach-navigation/);
   assert.match(botPage, /Spiegazione precedente/);
   assert.match(botPage, /Spiegazione successiva/);
+  assert.match(botPage, /Invocare un Eco significa usare di nuovo il suo effetto/);
+  assert.doesNotMatch(botPage, /Clicca a sinistra per tornare indietro o a destra per avanzare/);
   assert.match(manual, /def _prepare_tutorial_opening/);
   assert.match(manual, /def _tutorial_opponent_action/);
   assert.match(manual, /TUTORIAL_FIRST_CURSE = 23/);

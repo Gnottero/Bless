@@ -317,7 +317,7 @@ const ABILITY_HELP = [
 const ABILITY_SPLIT_PATTERN = /(Rivalità|Impatto|Barriera|Fato|Schermatura|Emblema|Colosso|Cadenza)/gi;
 
 const PRAYER_TYPE_HELP: Record<string, string> = {
-  Eco: "Resta nella Zona Preghiere e può essere Invocata nei turni successivi spendendo 1 Azione.",
+  Eco: "Resta nella Zona Preghiere. Invocare un Eco significa usare di nuovo il suo effetto nei turni successivi spendendo 1 Azione.",
   Impulso: "Risolve il proprio effetto quando viene giocata, poi viene messa nel Vuoto.",
   Legame: "Si lega a una Maledizione e le trasferisce il proprio effetto Preghiera finché resta legata.",
   Sigillo: "Entra Aperto. Quando è Chiuso perde il proprio effetto continuo; Invocarlo per riaprirlo costa 1 Azione.",
@@ -735,7 +735,7 @@ const TUTORIAL_CARD_PARTS = [
     key: "prayer",
     eyebrow: "4 · Tipo di Preghiera",
     title: "Eco, Impulso o Legame",
-    body: "Orizzonte è un Eco. Gli Eco restano in campo e possono essere Invocati di nuovo nei turni successivi. Il tipo è indicato insieme all'effetto Preghiera.",
+    body: "Orizzonte è un Eco. Gli Eco restano in campo: Invocare un Eco significa usare di nuovo il suo effetto nei turni successivi, normalmente spendendo 1 Azione. Il tipo è indicato insieme all'effetto Preghiera.",
     value: "Eco",
   },
   {
@@ -769,12 +769,6 @@ function TutorialIntro({ onStart }: { onStart: () => void }) {
         </div>
         <div
           className={`tutorial-card-lesson lesson-${part.key}`}
-          onClick={(event) => {
-            if ((event.target as HTMLElement).closest("button")) return;
-            const bounds = event.currentTarget.getBoundingClientRect();
-            moveLesson(event.clientX < bounds.left + bounds.width / 2 ? -1 : 1);
-          }}
-          title="Clicca a sinistra per tornare indietro o a destra per avanzare"
         >
           {part.key === "flow" ? (
             <div className="tutorial-flow-overview" aria-label="Riepilogo del flusso di una partita">
@@ -806,7 +800,7 @@ function TutorialIntro({ onStart }: { onStart: () => void }) {
           </div>
         </div>
         <div className="tutorial-intro-actions">
-          <small>Clicca la metà sinistra o destra della spiegazione per muoverti. Nel tutorial saranno disponibili soltanto le mosse spiegate.</small>
+          <small>Usa i pulsanti con le frecce per rileggere i passaggi. Nel tutorial saranno disponibili soltanto le mosse spiegate.</small>
           {partIndex > 0 && <button type="button" className="tutorial-back" onClick={() => moveLesson(-1)}>← Indietro</button>}
           <button type="button" onClick={() => moveLesson(1)}>
             {lastPart ? "Inizia il tutorial →" : "Avanti →"}
