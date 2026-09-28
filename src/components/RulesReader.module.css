@@ -1,0 +1,226 @@
+.layout {
+  display: grid;
+  gap: 40px;
+  margin-top: 44px;
+}
+
+.sidebar {
+  align-self: start;
+}
+
+.tocTitle {
+  font-family: var(--font-display);
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--text-2);
+  margin-bottom: 12px;
+}
+
+.toc {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: 1px;
+  border-left: var(--stroke) solid var(--line);
+}
+
+.tocLink {
+  display: block;
+  padding: 7px 14px;
+  margin-left: -1.5px;
+  border-left: 3px solid transparent;
+  font-family: var(--font-display);
+  font-size: 17px;
+  color: var(--text-2);
+  transition: color 0.16s ease, border-color 0.16s ease;
+}
+
+.tocLink:hover {
+  color: var(--text);
+}
+
+.tocLink[data-active="true"] {
+  color: var(--accent);
+  border-left-color: var(--accent);
+  font-weight: 600;
+}
+
+.tocLink[data-dimmed="true"] {
+  opacity: 0.32;
+}
+
+.search {
+  margin-bottom: 8px;
+}
+
+.input {
+  width: 100%;
+  appearance: none;
+  padding: 15px 20px;
+  min-height: 52px;
+  border-radius: 999px;
+  border: var(--stroke) solid var(--ink);
+  background: var(--surface);
+  color: var(--text);
+  font: inherit;
+  font-size: 15px;
+  box-shadow: 2px 2px 0 rgb(28 23 16 / 0.18);
+}
+
+.input::placeholder {
+  color: var(--text-3);
+}
+
+.input:focus {
+  outline: none;
+  box-shadow: 3px 3px 0 var(--ink);
+}
+
+.resultCount {
+  margin-top: 10px;
+  padding-left: 4px;
+  font-size: 12px;
+  color: var(--text-3);
+}
+
+.empty {
+  margin-top: 32px;
+  color: var(--text-2);
+  max-width: 50ch;
+}
+
+.section {
+  padding-top: 40px;
+  margin-top: 40px;
+  border-top: var(--stroke) solid var(--line);
+  scroll-margin-top: 92px;
+}
+
+.section:first-of-type {
+  border-top: 0;
+}
+
+.h2 {
+  font-size: clamp(24px, 3.6vw, 34px);
+}
+
+.summary {
+  margin-top: 8px;
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: 15.5px;
+  color: var(--text-3);
+}
+
+.paragraph {
+  margin-top: 18px;
+  color: var(--text-2);
+  font-size: 16.5px;
+  line-height: 1.68;
+  max-width: 68ch;
+}
+
+.note {
+  margin-top: 20px;
+  padding: 14px 18px;
+  border: var(--stroke) solid var(--ink);
+  border-left-width: 5px;
+  border-left-color: var(--accent);
+  border-radius: 0 var(--corner-sm) var(--corner-sm) 0;
+  background: var(--surface);
+  color: var(--text-2);
+  font-size: 15px;
+  max-width: 68ch;
+}
+
+.list,
+.steps {
+  margin-top: 18px;
+  padding-left: 22px;
+  display: grid;
+  gap: 10px;
+  color: var(--text-2);
+  font-size: 16.5px;
+  line-height: 1.6;
+  max-width: 68ch;
+}
+
+.steps li::marker {
+  color: var(--accent);
+  font-family: var(--font-display);
+  font-weight: 700;
+}
+
+.list li::marker {
+  color: var(--accent);
+}
+
+.glossary {
+  margin-top: 24px;
+  display: grid;
+  gap: 0;
+  border-top: var(--stroke) solid var(--line);
+}
+
+.entry {
+  padding: 18px 0;
+  border-bottom: 1px solid var(--line-soft);
+  display: grid;
+  gap: 6px;
+  scroll-margin-top: 96px;
+  transition: background-color 0.4s ease, box-shadow 0.4s ease;
+}
+
+/* Highlight the entry you jumped to from a card, otherwise it's hard to
+   tell where you landed. */
+.entry:target {
+  background: var(--surface-2);
+  box-shadow: 0 0 0 10px var(--surface-2), -4px 0 0 10px var(--accent);
+}
+
+.entry dt {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 19px;
+}
+
+.category {
+  font-family: var(--font-display);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+.entry dd {
+  margin: 0;
+  color: var(--text-2);
+  font-size: 15.5px;
+  line-height: 1.6;
+  max-width: 68ch;
+}
+
+@media (min-width: 900px) {
+  .layout {
+    grid-template-columns: 230px minmax(0, 1fr);
+    gap: 56px;
+  }
+  .sidebar {
+    position: sticky;
+    top: 92px;
+    max-height: calc(100vh - 120px);
+    overflow-y: auto;
+  }
+  .entry {
+    grid-template-columns: 200px minmax(0, 1fr);
+    gap: 24px;
+    align-items: baseline;
+  }
+}
