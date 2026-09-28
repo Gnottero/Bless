@@ -12,24 +12,6 @@
 
 ![La home di Bless](docs/screenshots/home.webp)
 
-## Il progetto
-
-Un sito pensato per somigliare al gioco che racconta. La pergamena, i tratti a
-inchiostro e i colori sono quelli delle carte, così il sito sembra fatto con
-gli stessi materiali del mazzo.
-
-Il sito accompagna il giocatore dalla prima scoperta alla partita:
-
-- **Le carte.** Il catalogo completo del mazzo, da cercare e filtrare. Ogni
-  carta ha una sua pagina, che prende i colori della sua Forma.
-- **Il regolamento.** Tutte le regole in una sola pagina. Il glossario spiega
-  ogni termine di gioco nel punto esatto in cui compare.
-- **La partita.** Si sceglie il mazzo e si gioca subito contro il Bot, oppure
-  si invita un amico con un link.
-
-Il sito è curato in ogni dettaglio: veloce, accessibile e pensato per il
-telefono quanto per il desktop.
-
 ## Sviluppo
 
 Realizzato con Next.js e TypeScript.
