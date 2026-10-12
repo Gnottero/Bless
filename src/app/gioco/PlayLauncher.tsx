@@ -30,8 +30,6 @@ const DECKS: { id: DeckId; title: string; subtitle: string; text: string }[] = [
   },
 ];
 
-const DEFAULT_NAME = "Giocatore 1";
-const GUEST_NAME = "Giocatore 2";
 
 const dateFormat = new Intl.DateTimeFormat("it-IT", {
   day: "numeric",
@@ -143,13 +141,16 @@ export default function PlayLauncher() {
   /** Opens a room, or joins a friend's by its code, then goes to its page. */
   async function enterRoom(form: "create" | "join", e: FormEvent) {
     e.preventDefault();
+    // The name field serves both forms, so neither can mark it `required`.
+    if (!name.trim()) {
+      setError({ form, text: "Scegli un nome prima di entrare." });
+      document.getElementById(nameId)?.focus();
+      return;
+    }
     setBusy(form);
     setError(null);
     try {
-      const room =
-        form === "create"
-          ? await createRoom(name.trim() || DEFAULT_NAME)
-          : await joinRoom(code, name.trim() || GUEST_NAME);
+      const room = form === "create" ? await createRoom(name.trim()) : await joinRoom(code, name.trim());
       rememberRoomAccess(room.code, room.token);
       // The room page belongs to the simulator, not to this app: full load.
       window.location.assign(roomUrl(room.code));
@@ -254,8 +255,8 @@ export default function PlayLauncher() {
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 maxLength={24}
-                placeholder={DEFAULT_NAME}
                 autoComplete="nickname"
+                aria-required="true"
               />
               <form className={styles.invite} onSubmit={(e) => enterRoom("create", e)}>
                 <button
