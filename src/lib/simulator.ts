@@ -28,21 +28,31 @@ export function roomUrl(code: string): string {
 
 /* ------------------------------ rooms ------------------------------ */
 
-type CreatedRoom = { code: string; token: string };
+/** A seat in a room: its code and the player's access token. */
+type RoomAccess = { code: string; token: string };
 
 function isObject(value: unknown): value is Record<string, unknown> {
   return value !== null && typeof value === "object" && !Array.isArray(value);
 }
 
 /** Opens a private room and returns its code plus the host's access token. */
-export async function createRoom(name: string): Promise<CreatedRoom> {
+export function createRoom(name: string): Promise<RoomAccess> {
+  return postRoom({ operation: "create", name });
+}
+
+/** Takes the guest seat of a friend's room, by its code. */
+export function joinRoom(code: string, name: string): Promise<RoomAccess> {
+  return postRoom({ operation: "join", code: code.trim().toUpperCase(), name });
+}
+
+async function postRoom(payload: Record<string, string>): Promise<RoomAccess> {
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), TIMEOUT_MS);
   try {
     const res = await fetch(API, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ operation: "create", name }),
+      body: JSON.stringify(payload),
       cache: "no-store",
       signal: controller.signal,
     });
@@ -73,7 +83,7 @@ export async function createRoom(name: string): Promise<CreatedRoom> {
   }
 }
 
-/** Stores the token the room page reads to let the host back in. */
+/** Stores the token the room page reads to let the player back in. */
 export function rememberRoomAccess(code: string, token: string): void {
   const key = ROOM_KEY_PREFIX + code.toUpperCase();
   for (const store of ["localStorage", "sessionStorage"] as const) {

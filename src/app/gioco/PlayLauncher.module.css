@@ -306,6 +306,40 @@
   margin-top: auto;
 }
 
+/* Joining a friend's room: the code and its button on one row. */
+.join {
+  display: grid;
+  gap: 8px;
+  margin-top: 10px;
+  padding-top: 16px;
+  border-top: 1.5px dashed var(--line);
+}
+
+.joinRow {
+  display: flex;
+  gap: 8px;
+}
+
+.joinRow .field {
+  flex: 1;
+  min-width: 0;
+}
+
+.codeField {
+  font-family: var(--font-mono);
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+}
+
+.joinButton {
+  flex: none;
+}
+
+.joinButton:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
 .fieldLabel {
   font-size: 14px;
   font-weight: 600;

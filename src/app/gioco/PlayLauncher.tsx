@@ -6,6 +6,7 @@ import {
   botUrl,
   createRoom,
   downloadReplayArchive,
+  joinRoom,
   readSavedReplays,
   rememberRoomAccess,
   roomUrl,
@@ -30,6 +31,7 @@ const DECKS: { id: DeckId; title: string; subtitle: string; text: string }[] = [
 ];
 
 const DEFAULT_NAME = "Giocatore 1";
+const GUEST_NAME = "Giocatore 2";
 
 const dateFormat = new Intl.DateTimeFormat("it-IT", {
   day: "numeric",
@@ -105,12 +107,15 @@ function StepHeading({ n, kicker, title, id }: { n: string; kicker: string; titl
 export default function PlayLauncher() {
   const [deck, setDeck] = useState<DeckId>("Luce-Ombra");
   const [name, setName] = useState("");
-  const [creating, setCreating] = useState(false);
-  const [error, setError] = useState("");
+  const [code, setCode] = useState("");
+  /** The room request on its way, if any: opening one or joining one. */
+  const [busy, setBusy] = useState<"create" | "join" | null>(null);
+  const [error, setError] = useState<{ form: "create" | "join"; text: string } | null>(null);
   // null until read on the client, so the server HTML doesn't claim "0".
   const [replays, setReplays] = useState<SavedReplay[] | null>(null);
   const [exportStatus, setExportStatus] = useState("");
   const nameId = useId();
+  const codeId = useId();
 
   const selected = DECKS.find((d) => d.id === deck) ?? DECKS[0];
 
@@ -120,11 +125,11 @@ export default function PlayLauncher() {
       if (e.key === null || e.key === REPLAYS_KEY) refresh();
     };
     // Coming back from the simulator via the back button restores this page
-    // from the bfcache: re-read the archive and unlock the invite button.
+    // from the bfcache: re-read the archive and unlock the room buttons.
     const onPageShow = (e: PageTransitionEvent) => {
       if (!e.persisted) return;
       refresh();
-      setCreating(false);
+      setBusy(null);
     };
     refresh();
     window.addEventListener("storage", onStorage);
@@ -135,20 +140,35 @@ export default function PlayLauncher() {
     };
   }, []);
 
-  async function onCreateRoom(e: FormEvent) {
+  /** Opens a room, or joins a friend's by its code, then goes to its page. */
+  async function enterRoom(form: "create" | "join", e: FormEvent) {
     e.preventDefault();
-    setCreating(true);
-    setError("");
+    setBusy(form);
+    setError(null);
     try {
-      const room = await createRoom(name.trim() || DEFAULT_NAME);
+      const room =
+        form === "create"
+          ? await createRoom(name.trim() || DEFAULT_NAME)
+          : await joinRoom(code, name.trim() || GUEST_NAME);
       rememberRoomAccess(room.code, room.token);
       // The room page belongs to the simulator, not to this app: full load.
       window.location.assign(roomUrl(room.code));
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Non è stato possibile creare la stanza.");
-      setCreating(false);
+      const fallback =
+        form === "create"
+          ? "Non è stato possibile creare la stanza."
+          : "Non è stato possibile entrare nella stanza.";
+      setError({ form, text: err instanceof Error ? err.message : fallback });
+      setBusy(null);
     }
   }
+
+  const errorOf = (form: "create" | "join") =>
+    error?.form === form && (
+      <p className={styles.error} role="alert">
+        {error.text}
+      </p>
+    );
 
   function onDownload() {
     if (!replays) return;
@@ -221,10 +241,10 @@ export default function PlayLauncher() {
             <p className={styles.tag}>Partita privata 1 contro 1</p>
             <h3 className={styles.modeTitle}>Invita un giocatore</h3>
             <p className={styles.modeText}>
-              Crea una stanza, condividi il link e scegliete insieme lo stesso mazzo prima di
-              iniziare.
+              Crea una stanza e manda il codice al tuo avversario, oppure entra con il codice
+              che ti hanno mandato. Chi crea la stanza sceglie la modalità.
             </p>
-            <form className={styles.invite} onSubmit={onCreateRoom}>
+            <div className={styles.invite}>
               <label htmlFor={nameId} className={styles.fieldLabel}>
                 Il tuo nome al tavolo
               </label>
@@ -237,28 +257,55 @@ export default function PlayLauncher() {
                 placeholder={DEFAULT_NAME}
                 autoComplete="nickname"
               />
-              <button
-                type="submit"
-                className={`btn btn--ghost ${styles.action}`}
-                disabled={creating}
-                aria-busy={creating}
-              >
-                {creating ? (
-                  <>
-                    <span className={styles.spinner} aria-hidden="true" /> Creo la stanza…
-                  </>
-                ) : (
-                  <>
-                    <Icon name="link" size={18} /> Crea link d&apos;invito
-                  </>
-                )}
-              </button>
-              {error && (
-                <p className={styles.error} role="alert">
-                  {error}
-                </p>
-              )}
-            </form>
+              <form className={styles.invite} onSubmit={(e) => enterRoom("create", e)}>
+                <button
+                  type="submit"
+                  className={`btn btn--ghost ${styles.action}`}
+                  disabled={busy !== null}
+                  aria-busy={busy === "create"}
+                >
+                  {busy === "create" ? (
+                    <>
+                      <span className={styles.spinner} aria-hidden="true" /> Creo la stanza…
+                    </>
+                  ) : (
+                    <>
+                      <Icon name="link" size={18} /> Crea link d&apos;invito
+                    </>
+                  )}
+                </button>
+                {errorOf("create")}
+              </form>
+              <form className={styles.join} onSubmit={(e) => enterRoom("join", e)}>
+                <label htmlFor={codeId} className={styles.fieldLabel}>
+                  Hai un codice? Entra nella stanza
+                </label>
+                <div className={styles.joinRow}>
+                  <input
+                    id={codeId}
+                    className={`${styles.field} ${styles.codeField}`}
+                    value={code}
+                    onChange={(e) => setCode(e.target.value)}
+                    required
+                    maxLength={5}
+                    autoComplete="off"
+                    autoCapitalize="characters"
+                    spellCheck={false}
+                    placeholder="ABCDE"
+                  />
+                  <button
+                    type="submit"
+                    className={`btn btn--ghost ${styles.joinButton}`}
+                    disabled={busy !== null || !code.trim()}
+                    aria-busy={busy === "join"}
+                  >
+                    {busy === "join" && <span className={styles.spinner} aria-hidden="true" />}
+                    Entra
+                  </button>
+                </div>
+                {errorOf("join")}
+              </form>
+            </div>
           </article>
         </div>
       </section>
